@@ -11,7 +11,7 @@ namespace FileFormatTest
         static void Main(string[] args)
         {
 
-            FileStream fs = new FileStream("D:\\unityasset\\test.assets", FileMode.Open,FileAccess.Read);
+            FileStream fs = new FileStream("unityasset/test.assets", FileMode.Open,FileAccess.Read);
             DataReader br = new DataReader(fs);
 
             AssetHeader header = new AssetHeader();

@@ -9,13 +9,33 @@ namespace FileFormatTest
     public class DataStuct
     {
         public virtual void Read(DataReader br) { }
-
         public override string ToString()
         {
             string str = GetType().Name + ":\n{\n";
             var fields = GetType().GetFields();
             foreach (var field in fields) {
-                str +="    "+ field.Name + ":" + field.GetValue(this) + "\n";
+                object value = field.GetValue(this);
+                string fieldValueStr = "";
+                if (value != null) {
+                    if (value is Array) {
+                        var array =  (Array)value;
+                        fieldValueStr += "[";
+                        int i = 0;
+                        foreach (var obj in array) {
+                            fieldValueStr += obj.ToString() + ",";
+                            if (i++ >= 100) {
+                                fieldValueStr += "    ...";
+                                break;
+                            }
+                        }
+                        fieldValueStr += "]\n";
+                    } else {
+                        fieldValueStr = field.GetValue(this).ToString();
+                    }
+                } else {
+                    fieldValueStr = "NULL";
+                }
+                str +="    "+ field.Name + ":" + fieldValueStr + "\n";
             }
             str += "}\n";
             return str;
