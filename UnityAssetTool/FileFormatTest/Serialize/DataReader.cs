@@ -26,6 +26,15 @@ namespace FileFormatTest
             }
         }
 
+
+        public Stream BaseStream
+        {
+            get
+            {
+                return mStream.BaseStream;
+            }
+        }
+
         public int ReadInt32()
         {
             var arr = mStream.ReadBytes(4);
@@ -96,6 +105,16 @@ namespace FileFormatTest
 
         }
 
+        public uint ReadUInt32()
+        {
+            var arr = mStream.ReadBytes(4);
+            if (IsNeedReverse()) {
+                Array.Reverse(arr);
+            }
+            return BitConverter.ToUInt32(arr, 0);
+
+        }
+
         public long position
         {
             get
@@ -118,11 +137,30 @@ namespace FileFormatTest
             }
         }
 
-        public byte[] ReadBytes(int count)
+
+        public byte[] GetRangeBytes(uint startIndex, uint size)
         {
-            return mStream.ReadBytes(count);     
+            var oldPos = this.position;
+            this.position = startIndex;
+            var ret = ReadBytes((int)size);
+            this.position = oldPos;
+            return ret;
         }
 
+        public byte[] ReadBytes(int count)
+        {
+            return mStream.ReadBytes(count);
+        }
+
+        public sbyte[] ReadSbytes(int count)
+        {
+            sbyte[] sbytes = new sbyte[count];
+            for (int i = 0; i < sbytes.Length; i++) {
+                sbytes[i] = mStream.ReadSByte();
+            }
+            return sbytes;
+
+        }
         public string ReadString()
         {
             return mStream.ReadString();
@@ -133,7 +171,18 @@ namespace FileFormatTest
             return mStream.ReadChars(count);
         }
 
-        public string ReadString(int limit)
+        public string ReadStringNull()
+        {
+            List<char> buff = new List<char>();
+            char ch;
+            while ((ch = ReadChar()) != 0) {
+                buff.Add(ch);
+            }
+            return new string(buff.ToArray(), 0, buff.Count);
+            //return ReadStringNull(256);
+        }
+
+        public string ReadStringNull(int limit)
         {
             char[] buff = new char[limit];
             char ch;

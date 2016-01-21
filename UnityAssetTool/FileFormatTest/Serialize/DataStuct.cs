@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace FileFormatTest
 {
-    public class DataStuct
+    public class SerializeDataStruct
     {
-        public virtual void Read(DataReader br) { }
+        public virtual void UnSerialize(DataReader data) { }
         public override string ToString()
         {
             string str = GetType().Name + ":\n{\n";

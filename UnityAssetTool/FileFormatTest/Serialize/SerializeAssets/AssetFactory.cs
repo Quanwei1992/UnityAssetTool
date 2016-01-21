@@ -13,13 +13,13 @@ namespace FileFormatTest
     public static class AssetFactory
     {
 
-        public static DataStuct CreateWithVersion(int version)
+        public static SerializeDataStruct CreateWithVersion(int version)
         {
             switch (version) {
                 case 9:
                 return new Asset_V9();
                 case 15:
-                return new Asset_V15();
+                return new SerializeAssetV15();
                 default:
                 return null;
             }

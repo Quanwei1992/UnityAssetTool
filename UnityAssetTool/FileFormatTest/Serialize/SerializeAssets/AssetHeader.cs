@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace FileFormatTest
 {
-    public class AssetHeader:DataStuct
+    public class AssetHeader:SerializeDataStruct
     {
         public int MetaDataSize;
         public uint FileSize;
         public int Version;
 
-        public override void Read(DataReader br)
+        public override void UnSerialize(DataReader br)
         {
             var oldOrder = br.byteOrder;
             br.byteOrder = DataReader.ByteOrder.Big;

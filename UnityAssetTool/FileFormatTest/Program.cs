@@ -11,22 +11,24 @@ namespace FileFormatTest
         static void Main(string[] args)
         {
 
-            FileStream fs = new FileStream("unityasset/test.assets", FileMode.Open,FileAccess.Read);
+            FileStream fs = new FileStream("unityasset/typeTree.assetbundle", FileMode.Open,FileAccess.Read);
             DataReader br = new DataReader(fs);
 
-            AssetHeader header = new AssetHeader();
-            header.Read(br);
-            Console.WriteLine(header);
-            var asset = AssetFactory.CreateWithVersion(header.Version);
-            if (asset != null) {
-                asset.Read(br);
-                Console.WriteLine(asset);
+            //AssetHeader header = new AssetHeader();
+            //header.Read(br);
+            //Console.WriteLine(header);
+            //var asset = AssetFactory.CreateWithVersion(header.Version);
+            //if (asset != null) {
+            //    asset.Read(br);
+            //    Console.WriteLine(asset);
 
-            } else {
-                Console.WriteLine("尚未支持的AssetVersion:" + header.Version);
-            }
-  
+            //} else {
+            //    Console.WriteLine("尚未支持的AssetVersion:" + header.Version);
+            //}
 
+            SerializeBundle bundle  = new SerializeBundle();
+            bundle.UnSerialize(br);
+            Console.WriteLine(bundle);
 
             br.Close();
             fs.Close();

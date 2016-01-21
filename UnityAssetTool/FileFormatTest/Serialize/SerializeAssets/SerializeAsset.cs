@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace FileFormatTest
 {
 
-    public class Asset_V9 : DataStuct
+    public class Asset_V9 : SerializeDataStruct
     {
         public uint DataOffset;
         public byte endianness;
@@ -16,13 +16,13 @@ namespace FileFormatTest
         public int attributes;
         int numOfBaseClasses;
 
-        public override void Read(DataReader br)
+        public override void UnSerialize(DataReader br)
         {
             throw new NotImplementedException();
         }
     }
 
-    public class Asset_V15 : DataStuct
+    public class SerializeAssetV15 : SerializeDataStruct
     {
         public uint DataOffset;
         public byte endianness;
@@ -40,21 +40,21 @@ namespace FileFormatTest
         public AssetObject[] objectInfos;
 
 
-        public override  void Read(DataReader br)
+        public override  void UnSerialize(DataReader br)
         {
             br.byteOrder = DataReader.ByteOrder.Big;
             DataOffset = br.ReadUint32();
             endianness = br.ReadByte();
             reserved = br.ReadBytes(3);
             br.byteOrder = DataReader.ByteOrder.Little;
-            UnityVersion = br.ReadString(255);
+            UnityVersion = br.ReadStringNull(255);
             attributes = br.ReadInt32();
             embedded = br.ReadBool();
             numOfBaseClasses = br.ReadInt32();
             classes = new BaseClass[numOfBaseClasses];
             for (int i = 0; i < numOfBaseClasses; i++) {
                 classes[i] = new BaseClass(embedded);
-                classes[i].Read(br);
+                classes[i].UnSerialize(br);
             }
             //padding
             //br.ReadInt32();
@@ -63,12 +63,13 @@ namespace FileFormatTest
             objectInfos = new AssetObject[numOfObjects];
             for (int i = 0; i < numOfObjects; i++) {
                 objectInfos[i] = new AssetObject((int)DataOffset);
-                objectInfos[i].Read(br);
+                objectInfos[i].UnSerialize(br);
             }
         }
 
         #region sub classes
-        public class BaseClass : DataStuct
+
+        public class BaseClass : SerializeDataStruct
         {
             public int ClassID;
             public byte[] hash;
@@ -83,7 +84,7 @@ namespace FileFormatTest
                 isEmbedded = embedded;
             }
 
-            public override void Read(DataReader br)
+            public override void UnSerialize(DataReader br)
             {
                 ClassID = br.ReadInt32();
                 if (ClassID < 0) {
@@ -96,14 +97,14 @@ namespace FileFormatTest
                     types = new BaseClassType[fildsCount];
                     for (int i = 0; i < fildsCount; i++) {
                         types[i] = new BaseClassType();
-                        types[i].Read(br);
+                        types[i].UnSerialize(br);
                     }
                     stringTable = br.ReadBytes(strTableSize);
                 }
             }
         }
 
-        public class BaseClassType : DataStuct
+        public class BaseClassType : SerializeDataStruct
         {
             public short version;
             public byte treeLevel;
@@ -113,7 +114,7 @@ namespace FileFormatTest
             public int size;
             public int index;
             public int metaFlag;
-            public override void Read(DataReader br)
+            public override void UnSerialize(DataReader br)
             {
                 version = br.ReadInt16();
                 treeLevel = br.ReadByte();
@@ -126,7 +127,7 @@ namespace FileFormatTest
             }
         }
 
-        public class AssetObject : DataStuct
+        public class AssetObject : SerializeDataStruct
         {
             private int mDataOffset;
             public AssetObject(int dataOffet)
@@ -152,9 +153,9 @@ namespace FileFormatTest
 
             public byte[] reserved;
 
-            public byte[] data;
+            public byte [] data;
 
-            public override void Read(DataReader br)
+            public override void UnSerialize(DataReader br)
             {
                 PathID = br.ReadInt64();
                 offset = br.ReadUint32();
@@ -167,9 +168,6 @@ namespace FileFormatTest
                 br.position = mDataOffset + offset;
                 data = br.ReadBytes((int)length);
                 br.position = oldPos;
-                if (classID == 28) {
-                    Console.WriteLine("Texture2D:" + length);
-                }
             }
         }
 
