@@ -64,16 +64,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Serialize\SerializeAssets\AssetFactory.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Serialize\SerializeAssets\SerializeAssetFactory.cs" />
+    <Compile Include="Serialize\SerializeAssets\SerializeAssetV09.cs" />
     <Compile Include="Serialize\SerializeBundle\SerializeBundle.cs" />
     <Compile Include="Serialize\SerializeBundle\SerializeBundleEntryInfo.cs" />
     <Compile Include="Serialize\SerializeBundle\SerializeBundleHeader.cs" />
     <Compile Include="Serialize\DataReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serialize\SerializeAssets\SerializeAsset.cs" />
-    <Compile Include="Serialize\SerializeAssets\AssetHeader.cs" />
-    <Compile Include="Serialize\DataStuct.cs" />
+    <Compile Include="Serialize\SerializeAssets\SerializeAssetV15.cs" />
+    <Compile Include="Serialize\SerializeDataStruct.cs" />
+    <Compile Include="Serialize\SerializeUtility.cs" />
     <Compile Include="Serialize\ThirdPart\7zip\Common\CommandLineParser.cs" />
     <Compile Include="Serialize\ThirdPart\7zip\Common\CRC.cs" />
     <Compile Include="Serialize\ThirdPart\7zip\Common\InBuffer.cs" />
@@ -89,7 +95,8 @@
     <Compile Include="Serialize\ThirdPart\7zip\Compress\RangeCoder\RangeCoderBit.cs" />
     <Compile Include="Serialize\ThirdPart\7zip\Compress\RangeCoder\RangeCoderBitTree.cs" />
     <Compile Include="Serialize\ThirdPart\7zip\ICoder.cs" />
-    <Compile Include="Serialize\UnityVersion.cs" />
+    <Compile Include="Unity\TypeTree.cs" />
+    <Compile Include="Unity\TypeTreeDataBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -105,6 +112,16 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extract\AssetBundleExtract\" />
+    <Folder Include="Extract\AssetsExtract\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

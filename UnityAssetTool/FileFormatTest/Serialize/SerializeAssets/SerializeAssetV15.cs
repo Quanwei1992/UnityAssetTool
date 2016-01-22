@@ -7,27 +7,12 @@ using System.Threading.Tasks;
 namespace FileFormatTest
 {
 
-    public class Asset_V9 : SerializeDataStruct
-    {
-        public uint DataOffset;
-        public byte endianness;
-        public byte[] reserved = new byte[3];
-        public string UnityVersion;
-        public int attributes;
-        int numOfBaseClasses;
-
-        public override void UnSerialize(DataReader br)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class SerializeAssetV15 : SerializeDataStruct
     {
-        public uint DataOffset;
-        public byte endianness;
 
-        public byte[] reserved;
+
+        public SerializeAssetHeader header = new SerializeAssetHeader();
+
         public string UnityVersion;
         public int attributes;
         //type tree
@@ -42,12 +27,10 @@ namespace FileFormatTest
 
         public override  void UnSerialize(DataReader br)
         {
-            br.byteOrder = DataReader.ByteOrder.Big;
-            DataOffset = br.ReadUint32();
-            endianness = br.ReadByte();
-            reserved = br.ReadBytes(3);
+
+            header.UnSerialize(br);
             br.byteOrder = DataReader.ByteOrder.Little;
-            UnityVersion = br.ReadStringNull(255);
+            UnityVersion = br.ReadStringNull();
             attributes = br.ReadInt32();
             embedded = br.ReadBool();
             numOfBaseClasses = br.ReadInt32();
@@ -56,18 +39,40 @@ namespace FileFormatTest
                 classes[i] = new BaseClass(embedded);
                 classes[i].UnSerialize(br);
             }
-            //padding
-            //br.ReadInt32();
+
             numOfObjects = br.ReadInt32();
             br.Align(4);
             objectInfos = new AssetObject[numOfObjects];
             for (int i = 0; i < numOfObjects; i++) {
-                objectInfos[i] = new AssetObject((int)DataOffset);
+                objectInfos[i] = new AssetObject((int)header.DataOffset);
                 objectInfos[i].UnSerialize(br);
             }
         }
 
         #region sub classes
+
+        public class SerializeAssetHeader : SerializeDataStruct
+        {
+            public int MetaDataSize;
+            public uint FileSize;
+            public int Version;
+            public uint DataOffset;
+            public byte endianness;
+            public byte[] reserved;
+            
+            public override void UnSerialize(DataReader data)
+            {
+                data.byteOrder = DataReader.ByteOrder.Big;
+                MetaDataSize = data.ReadInt32();
+                FileSize = data.ReadUint32();
+                Version = data.ReadInt32();
+                DataOffset = data.ReadUint32();
+                endianness = data.ReadByte();
+                reserved = data.ReadBytes(3);
+            }
+        }
+
+        
 
         public class BaseClass : SerializeDataStruct
         {
@@ -164,14 +169,16 @@ namespace FileFormatTest
                 classID = br.ReadInt16();
                 isDestroyed = br.ReadInt16();
                 reserved = br.ReadBytes(4);
-                long oldPos = br.position;
-                br.position = mDataOffset + offset;
-                data = br.ReadBytes((int)length);
-                br.position = oldPos;
+                data = br.GetRangeBytes((uint)(mDataOffset + offset), length);
             }
         }
 
         #endregion
     }
+
+
+
+
+
 
 }
