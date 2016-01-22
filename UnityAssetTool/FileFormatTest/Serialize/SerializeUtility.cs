@@ -84,6 +84,7 @@ namespace FileFormatTest
                     if (nodePrev == null) {
                         rootType.name = name;
                         rootType.type = type;
+                        rootType.metaFlag = field.metaFlag;
                         nodePrev = rootType;
                         typeLevelDic[nodePrev] = field.treeLevel;
                         continue;
@@ -91,6 +92,7 @@ namespace FileFormatTest
                     TypeTree nodeCurr = new TypeTree();
                     nodeCurr.name = name;
                     nodeCurr.type = type;
+                    nodeCurr.metaFlag = field.metaFlag;
                     typeLevelDic[nodeCurr] = field.treeLevel;
                     int levels = typeLevelDic[nodePrev] - field.treeLevel;
                     if (levels >= 0) {

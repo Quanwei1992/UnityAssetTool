@@ -95,6 +95,8 @@
     <Compile Include="Serialize\ThirdPart\7zip\Compress\RangeCoder\RangeCoderBit.cs" />
     <Compile Include="Serialize\ThirdPart\7zip\Compress\RangeCoder\RangeCoderBitTree.cs" />
     <Compile Include="Serialize\ThirdPart\7zip\ICoder.cs" />
+    <Compile Include="Unity\SerializeObject.cs" />
+    <Compile Include="Unity\SerializeProperty.cs" />
     <Compile Include="Unity\TypeTree.cs" />
     <Compile Include="Unity\TypeTreeDataBase.cs" />
   </ItemGroup>

@@ -8,11 +8,14 @@ namespace FileFormatTest
 {
     public class TypeTree
     {
+        public const int FLAG_FORCE_ALIGN = 0x4000;
+
         public TypeTree parent;
         List<TypeTree> childs = new List<TypeTree>();
         public string name;
         public string type;
-
+        public int metaFlag;
+        public int version;
 
         public TypeTree[] GetChildren(bool recursively = false)
         {

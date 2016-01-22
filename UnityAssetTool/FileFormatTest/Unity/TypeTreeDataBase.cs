@@ -108,6 +108,7 @@ namespace FileFormatTest
                     bw.Write(parentIndex);
                     bw.Write(type.type);
                     bw.Write(type.name);
+                    bw.Write(type.metaFlag);
                     var children = type.GetChildren(true);
                     foreach (var child in children) {
                         parentIndex = -1;
@@ -119,6 +120,7 @@ namespace FileFormatTest
                         bw.Write(parentIndex);
                         bw.Write(child.type);
                         bw.Write(child.name);
+                        bw.Write(child.metaFlag);
                     }
 
                 }
@@ -140,6 +142,7 @@ namespace FileFormatTest
                 typeParentDic[trees[i]] = br.ReadInt32();
                 trees[i].type = br.ReadString();
                 trees[i].name = br.ReadString();
+                trees[i].metaFlag = br.ReadInt32();
             }
 
             for (int i = 0; i < numOfTypes; i++) {

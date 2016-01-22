@@ -11,48 +11,37 @@ namespace FileFormatTest
     {
         static void Main(string[] args)
         {
-         
-            //FileStream fs = new FileStream("unityasset/typeTree.assetbundle", FileMode.Open,FileAccess.Read);
-            //DataReader br = new DataReader(fs);
 
-            ////AssetHeader header = new AssetHeader();
-            ////header.Read(br);
-            ////Console.WriteLine(header);
-            ////var asset = AssetFactory.CreateWithVersion(header.Version);
-            ////if (asset != null) {
-            ////    asset.Read(br);
-            ////    Console.WriteLine(asset);
+            FileStream fs = new FileStream("unityasset/typeTree.assetbundle", FileMode.Open, FileAccess.Read);
+            DataReader br = new DataReader(fs);
 
-            ////} else {
-            ////    Console.WriteLine("尚未支持的AssetVersion:" + header.Version);
-            ////}
-
-            //SerializeBundle bundle  = new SerializeBundle();
-            //bundle.UnSerialize(br);
-            //Console.WriteLine(bundle);
+            SerializeBundle bundle = new SerializeBundle();
+            bundle.UnSerialize(br);
             //TypeTreeDataBase typeDataBase = new TypeTreeDataBase();
-            //foreach (var bundleEntry in bundle.entrys) {
-            //    int version = SerializeUtility.GetAssetsFileVersion(bundleEntry.assetData);
-            //    Console.WriteLine("Name:" + bundleEntry.name + ",Version:" + version);
-            //    var serializeAssets = SerializeAssetFactory.CreateWithVersion(version);
-            //    MemoryStream ms = new MemoryStream(bundleEntry.assetData);
-            //    DataReader dr = new DataReader(ms);
-            //    serializeAssets.UnSerialize(dr);
-            //    var db = SerializeUtility.GenerateTypeTreeDataBase(serializeAssets);
-            //    if (db != null) {
-            //        typeDataBase = typeDataBase.Merage(db);
-            //    }
-            //    dr.Close();
-            //    ms.Close();
-            //}
+            //FileStream dbFs = new FileStream("d://TypeTreeDB.db", FileMode.Open, FileAccess.Read);
+            //typeDataBase.UnSerialize(dbFs);
+            //dbFs.Dispose();
 
-            //Stream dbFS = new FileStream("d://TypeTreeDB.db", FileMode.OpenOrCreate, FileAccess.Write);
-            //typeDataBase.Serialize(dbFS);
-            //dbFS.Flush();
-            //dbFS.Dispose();
-
-           
-
+            foreach (var bundleEntry in bundle.entrys) {
+                int version = SerializeUtility.GetAssetsFileVersion(bundleEntry.assetData);
+                Console.WriteLine("Name:" + bundleEntry.name + ",Version:" + version);
+                var serializeAssets = SerializeAssetFactory.CreateWithVersion(version);
+                MemoryStream ms = new MemoryStream(bundleEntry.assetData);
+                DataReader dr = new DataReader(ms);
+                serializeAssets.UnSerialize(dr);
+                var asset15 = serializeAssets as SerializeAssetV15;
+                var db = SerializeUtility.GenerateTypeTreeDataBase(asset15);
+                foreach (var objInfo in asset15.objectInfos) {
+                    var typeTree = db.GetType(15, objInfo.classID);
+                    if (typeTree != null) {
+                        SerializeObject sobj = new SerializeObject(typeTree, objInfo.data);
+                    } else {
+                        Console.WriteLine("未找到Type:" + objInfo.classID);
+                    }
+                }
+                dr.Close();
+                ms.Close();
+            }
 
 
             //br.Close();
