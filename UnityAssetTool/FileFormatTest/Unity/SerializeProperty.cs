@@ -26,7 +26,7 @@ namespace FileFormatTest
     }
 
 
-    class SerializeProperty : SerializeDataStruct
+    public class SerializeProperty : SerializeDataStruct
     {
         public SerializeProperty parent;
         public List<SerializeProperty> children = new List<SerializeProperty>();
@@ -55,6 +55,34 @@ namespace FileFormatTest
         {
             child.parent = this;
             children.Add(child);
+        }
+
+
+        public string FullName
+        {
+            get
+            {
+               return  this.mType.FullName;
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return this.mType.name;
+            }
+        }
+
+
+        public SerializeProperty FindChild(string fullName)
+        {
+            if (this.FullName == fullName) return this;
+            for (int i = 0; i < children.Count; i++) {
+                var child = children[i].FindChild(fullName);
+                if (child != null) return child;
+            }
+            return null;
         }
 
 
@@ -218,7 +246,7 @@ namespace FileFormatTest
 
         public string StringValue()
         {
-            return BitConverter.ToString(mRawdata);
+            return System.Text.UTF8Encoding.Default.GetString(mRawdata);
         }
 
         public byte[] ByteArrayValue()

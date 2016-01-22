@@ -64,6 +64,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extractor\AssetsExtractor\AssetsV15Extrator.cs" />
+    <Compile Include="Extractor\AssetsExtractor\IAssetsExtrator.cs" />
+    <Compile Include="Extractor\ISerializeObjectExtrator.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -116,8 +119,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Extract\AssetBundleExtract\" />
-    <Folder Include="Extract\AssetsExtract\" />
+    <Folder Include="Extractor\AssetBundleExtract\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

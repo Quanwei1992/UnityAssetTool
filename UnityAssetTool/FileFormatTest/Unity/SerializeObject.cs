@@ -7,7 +7,7 @@ using System.IO;
 
 namespace FileFormatTest
 {
-    class SerializeObject
+    public class SerializeObject
     {
         private SerializeProperty rootProperty;
         public SerializeObject(TypeTree type, byte[] rawData)
@@ -18,6 +18,11 @@ namespace FileFormatTest
             rootProperty.UnSerialize(br);
             br.Close();
             ms.Close();
+        }
+
+        public SerializeProperty FindProperty(string fullName)
+        {
+            return rootProperty.FindChild(fullName);
         }
     }
 }

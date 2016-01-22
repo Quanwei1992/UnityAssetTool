@@ -21,7 +21,7 @@ namespace FileFormatTest
             //FileStream dbFs = new FileStream("d://TypeTreeDB.db", FileMode.Open, FileAccess.Read);
             //typeDataBase.UnSerialize(dbFs);
             //dbFs.Dispose();
-
+            AssetsV15Extrator extartor = new AssetsV15Extrator();
             foreach (var bundleEntry in bundle.entrys) {
                 int version = SerializeUtility.GetAssetsFileVersion(bundleEntry.assetData);
                 Console.WriteLine("Name:" + bundleEntry.name + ",Version:" + version);
@@ -31,14 +31,7 @@ namespace FileFormatTest
                 serializeAssets.UnSerialize(dr);
                 var asset15 = serializeAssets as SerializeAssetV15;
                 var db = SerializeUtility.GenerateTypeTreeDataBase(asset15);
-                foreach (var objInfo in asset15.objectInfos) {
-                    var typeTree = db.GetType(15, objInfo.classID);
-                    if (typeTree != null) {
-                        SerializeObject sobj = new SerializeObject(typeTree, objInfo.data);
-                    } else {
-                        Console.WriteLine("未找到Type:" + objInfo.classID);
-                    }
-                }
+                extartor.Extract(asset15, db, "d://extract/");
                 dr.Close();
                 ms.Close();
             }
