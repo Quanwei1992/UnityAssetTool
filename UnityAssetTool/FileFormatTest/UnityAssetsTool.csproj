@@ -86,22 +86,74 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialize\SerializeAssets\SerializeAssetV15.cs" />
     <Compile Include="Serialize\SerializeDataStruct.cs" />
+    <Compile Include="ThirdPart\7zip\Common\CommandLineParser.cs" />
+    <Compile Include="ThirdPart\7zip\Common\CRC.cs" />
+    <Compile Include="ThirdPart\7zip\Common\InBuffer.cs" />
+    <Compile Include="ThirdPart\7zip\Common\OutBuffer.cs" />
+    <Compile Include="ThirdPart\7zip\Compress\LZMA\LzmaBase.cs" />
+    <Compile Include="ThirdPart\7zip\Compress\LZMA\LzmaDecoder.cs" />
+    <Compile Include="ThirdPart\7zip\Compress\LZMA\LzmaEncoder.cs" />
+    <Compile Include="ThirdPart\7zip\Compress\LZ\IMatchFinder.cs" />
+    <Compile Include="ThirdPart\7zip\Compress\LZ\LzBinTree.cs" />
+    <Compile Include="ThirdPart\7zip\Compress\LZ\LzInWindow.cs" />
+    <Compile Include="ThirdPart\7zip\Compress\LZ\LzOutWindow.cs" />
+    <Compile Include="ThirdPart\7zip\Compress\RangeCoder\RangeCoder.cs" />
+    <Compile Include="ThirdPart\7zip\Compress\RangeCoder\RangeCoderBit.cs" />
+    <Compile Include="ThirdPart\7zip\Compress\RangeCoder\RangeCoderBitTree.cs" />
+    <Compile Include="ThirdPart\7zip\ICoder.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\AssemblyLicenseAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\AssemblyUsageAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\BaseOptionAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\HelpOptionAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\HelpVerbOptionAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\MultiLineTextAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\OptionArrayAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\OptionAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\OptionListAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\ParserStateAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\ValueListAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\ValueOptionAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\Attributes\VerbOptionAttribute.cs" />
+    <Compile Include="ThirdPart\libcmdline\BadOptionInfo.cs" />
+    <Compile Include="ThirdPart\libcmdline\Extensions\CharExtensions.cs" />
+    <Compile Include="ThirdPart\libcmdline\Extensions\StringExtensions.cs" />
+    <Compile Include="ThirdPart\libcmdline\GlobalSuppressions.cs" />
+    <Compile Include="ThirdPart\libcmdline\Infrastructure\Assumes.cs" />
+    <Compile Include="ThirdPart\libcmdline\Infrastructure\Pair.cs" />
+    <Compile Include="ThirdPart\libcmdline\Infrastructure\PopsicleSetter.cs" />
+    <Compile Include="ThirdPart\libcmdline\Infrastructure\ReflectionCache.cs" />
+    <Compile Include="ThirdPart\libcmdline\Infrastructure\ReflectionHelper.cs" />
+    <Compile Include="ThirdPart\libcmdline\Infrastructure\SR1.strings.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ThirdPart\libcmdline\IParserState.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parser.cs" />
+    <Compile Include="ThirdPart\libcmdline\ParserException.cs" />
+    <Compile Include="ThirdPart\libcmdline\ParserSettings.cs" />
+    <Compile Include="ThirdPart\libcmdline\ParserState.cs" />
+    <Compile Include="ThirdPart\libcmdline\ParsingError.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\ArgumentParser.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\IArgumentEnumerator.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\LongOptionParser.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\OneCharStringEnumerator.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\OptionGroupParser.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\OptionInfo.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\OptionMap.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\PresentParserState.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\PropertyWriter.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\StringArrayEnumerator.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\TargetCapabilitiesExtensions.cs" />
+    <Compile Include="ThirdPart\libcmdline\Parsing\ValueMapper.cs" />
+    <Compile Include="ThirdPart\libcmdline\Text\BaseSentenceBuilder.cs" />
+    <Compile Include="ThirdPart\libcmdline\Text\CopyrightInfo.cs" />
+    <Compile Include="ThirdPart\libcmdline\Text\EnglishSentenceBuilder.cs" />
+    <Compile Include="ThirdPart\libcmdline\Text\FormatOptionHelpTextEventArgs.cs" />
+    <Compile Include="ThirdPart\libcmdline\Text\HeadingInfo.cs" />
+    <Compile Include="ThirdPart\libcmdline\Text\HelpText.cs" />
+    <Compile Include="ThirdPart\libcmdline\Text\_ParsingErrorsHandler.cs" />
     <Compile Include="Utility\SerializeUtility.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Common\CommandLineParser.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Common\CRC.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Common\InBuffer.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Common\OutBuffer.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Compress\LZMA\LzmaBase.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Compress\LZMA\LzmaDecoder.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Compress\LZMA\LzmaEncoder.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Compress\LZ\IMatchFinder.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Compress\LZ\LzBinTree.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Compress\LZ\LzInWindow.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Compress\LZ\LzOutWindow.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Compress\RangeCoder\RangeCoder.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Compress\RangeCoder\RangeCoderBit.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\Compress\RangeCoder\RangeCoderBitTree.cs" />
-    <Compile Include="Serialize\ThirdPart\7zip\ICoder.cs" />
     <Compile Include="Unity\SerializeObject.cs" />
     <Compile Include="Unity\SerializeProperty.cs" />
     <Compile Include="Unity\TypeTree.cs" />
@@ -109,6 +161,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ThirdPart\libcmdline\CommandLine.csproj.DotSettings" />
+    <None Include="ThirdPart\libcmdline\CommandLine35.v11.suo" />
+    <None Include="ThirdPart\libcmdline\Settings.StyleCop" />
+    <None Include="ThirdPart\libcmdline\StyleCop.Cache" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -123,6 +179,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Command\" />
     <Folder Include="Extractor\AssetBundleExtract\" />
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +187,25 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ThirdPart\libcmdline\bin\Debug\CommandLine.dll" />
+    <Content Include="ThirdPart\libcmdline\bin\Debug\CommandLine.pdb" />
+    <Content Include="ThirdPart\libcmdline\bin\Debug\CommandLine.XML" />
+    <Content Include="ThirdPart\libcmdline\bin\Release\CommandLine.dll" />
+    <Content Include="ThirdPart\libcmdline\bin\Release\CommandLine.XML" />
+    <Content Include="ThirdPart\libcmdline\CommandLine.csproj" />
+    <Content Include="ThirdPart\libcmdline\CommandLine.csproj.user" />
+    <Content Include="ThirdPart\libcmdline\CommandLine.sln.DotSettings.user" />
+    <Content Include="ThirdPart\libcmdline\CommandLine35.csproj" />
+    <Content Include="ThirdPart\libcmdline\CustomDictionary.xml" />
+    <Content Include="ThirdPart\libcmdline\Infrastructure\SR.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SR1.strings.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
