@@ -129,6 +129,7 @@ namespace FileFormatTest
 
         public void UnSerialize(Stream stream)
         {
+            if (stream.Length <= 0) return;
             BinaryReader br = new BinaryReader(stream);
             int numOfTypes = br.ReadInt32();
             TypeTree[] trees = new TypeTree[numOfTypes];

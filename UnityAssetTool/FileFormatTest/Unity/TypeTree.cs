@@ -76,7 +76,7 @@ namespace FileFormatTest
                 it = it.parent;
             }
 
-            finalStr = tabStr + type + " " + name + "\n";
+            finalStr = type + " " + name + "\n";
             if (childs.Count > 0) {
                 finalStr = finalStr + tabStr + "{\n";
                 for (int i = 0; i < childs.Count; i++) {

@@ -10,6 +10,7 @@ namespace FileFormatTest
     public class SerializeObject
     {
         private SerializeProperty rootProperty;
+
         public SerializeObject(TypeTree type, byte[] rawData)
         {
             rootProperty = new SerializeProperty(type);
@@ -23,6 +24,11 @@ namespace FileFormatTest
         public SerializeProperty FindProperty(string fullName)
         {
             return rootProperty.FindChild(fullName);
+        }
+
+        public override string ToString()
+        {
+            return rootProperty.ToString();
         }
     }
 }

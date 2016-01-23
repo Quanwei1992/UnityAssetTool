@@ -22,6 +22,21 @@ namespace FileFormatTest
             fs.Close();
             return version;
         }
+        /// <summary>
+        /// 获得AssetFile版本
+        ///5 = 1.2 - 2.0
+        // 6 = 2.1 - 2.6
+        // 7 = 3.0 (?)
+        // 8 = 3.1 - 3.4
+        // 9 = 3.5 - 4.5
+        // 11 = pre-5.0
+        // 12 = pre-5.0
+        // 13 = pre-5.0
+        // 14 = 5.0
+        // 15 = 5.0 (p3 and newer)
+        /// </summary>
+        /// <param name="fileBuff"></param>
+        /// <returns></returns>
 
         static public int GetAssetsFileVersion(byte[] fileBuff)
         {
@@ -36,6 +51,20 @@ namespace FileFormatTest
             return version;
         }
 
+
+
+        public static TypeTreeDataBase GenerateTypeTreeDataBase(SerializeDataStruct asset)
+        {
+            if (asset is SerializeAssetV09) {
+                return GenerateTypeTreeDataBase(asset as SerializeAssetV09);
+            }
+            if (asset is SerializeAssetV15) {
+                return GenerateTypeTreeDataBase(asset as SerializeAssetV15);
+            }
+            return null;
+        }
+
+        #region Generate TypeTree V15
 
         static public TypeTreeDataBase GenerateTypeTreeDataBase(SerializeAssetV15 asset)
         {
@@ -113,20 +142,33 @@ namespace FileFormatTest
             return DB;
         }
 
-        public static TypeTreeDataBase GenerateTypeTreeDataBase(SerializeDataStruct asset)
-        {
-            if (asset is SerializeAssetV09) {
-                return GenerateTypeTreeDataBase(asset as SerializeAssetV09);
-            }
-            if (asset is SerializeAssetV15) {
-                return GenerateTypeTreeDataBase(asset as SerializeAssetV15);
-            }
-            return null;
-        }
+        #endregion
+
+        #region Generate TypeTree V09
 
         static public TypeTreeDataBase GenerateTypeTreeDataBase(SerializeAssetV09 asset)
         {
-            return null;
+            TypeTreeDataBase DB = new TypeTreeDataBase();
+            foreach (var typetree in asset.typeTrees) {
+                var tree = GenerateTypeTreeV9(typetree.rootType);
+                DB.Put(9, typetree.ClassID, tree);
+                Console.WriteLine(tree);     
+            }
+            return DB;
         }
+
+        static public TypeTree GenerateTypeTreeV9(SerializeAssetV09.SerializeTypeTreeData tree)
+        {
+            TypeTree root = new TypeTree();
+            root.name = tree.name;
+            root.type = tree.type;
+            root.metaFlag = tree.metaFlag;
+            foreach (var childType in tree.children) {
+                var childTree = GenerateTypeTreeV9(childType);
+                root.AddChild(childTree);
+            }
+            return root;
+        }
+        #endregion
     }
 }

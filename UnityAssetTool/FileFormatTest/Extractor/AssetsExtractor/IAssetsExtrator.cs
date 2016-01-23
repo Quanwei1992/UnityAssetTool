@@ -9,5 +9,6 @@ namespace FileFormatTest
     interface IAssetsExtrator
     {
         void Extract(SerializeDataStruct assets,TypeTreeDataBase typeTreeDB,string outputPath);
+        ISerializeObjectExtrator GetDefaultSerializeObjectExtrator();
     }
 }

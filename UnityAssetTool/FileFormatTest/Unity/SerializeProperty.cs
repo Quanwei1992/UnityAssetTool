@@ -193,66 +193,159 @@ namespace FileFormatTest
 
         #region GetValue
 
-
-        public short ShortValue()
+        public bool BoolValue
         {
-            return BitConverter.ToInt16(mRawdata, 0);
+            get
+            {
+                return BitConverter.ToBoolean(mRawdata, 0);
+            }
+           
         }
 
-        public ushort UShortValue()
+        public short ShortValue
         {
-            return BitConverter.ToUInt16(mRawdata, 0);
+            get
+            {
+                return BitConverter.ToInt16(mRawdata, 0);
+            }
+            
         }
 
-        public int IntValue()
+        public ushort UShortValue
         {
-            return BitConverter.ToInt32(mRawdata, 0);
+            get
+            {
+                return BitConverter.ToUInt16(mRawdata, 0);
+            }
+            
         }
 
-        public uint UIntValue()
+        public int IntValue
         {
-            return BitConverter.ToUInt32(mRawdata, 0);
+            get
+            {
+                return BitConverter.ToInt32(mRawdata, 0);
+            }
+        }
+
+        public uint UIntValue
+        {
+            get
+            {
+                return BitConverter.ToUInt32(mRawdata, 0);
+            }
         }
 
 
-        public long LongValue()
+        public long LongValue
         {
-            return BitConverter.ToInt64(mRawdata, 0);
+            get
+            { return BitConverter.ToInt64(mRawdata, 0); }
         }
 
-        public ulong ULongValue()
+        public ulong ULongValue
         {
-            return BitConverter.ToUInt64(mRawdata, 0);
+            get
+            { return BitConverter.ToUInt64(mRawdata, 0); }
         }
 
-        public float FloatValue()
+        public float FloatValue
         {
-            return BitConverter.ToSingle(mRawdata, 0);
+            get
+            { return BitConverter.ToSingle(mRawdata, 0); }
         }
 
-        public double DoubleValue()
+        public double DoubleValue
         {
-            return BitConverter.ToDouble(mRawdata, 0);
+            get
+            { return BitConverter.ToDouble(mRawdata, 0); }
         }
 
-        public byte ByteValue()
+        public byte ByteValue
         {
-            return mRawdata[0];
+            get
+            { return mRawdata[0]; }
         }
-        public sbyte SByteValue()
+        public sbyte SByteValue
         {
-            return (sbyte)mRawdata[0];
-        }
-
-        public string StringValue()
-        {
-            return System.Text.UTF8Encoding.Default.GetString(mRawdata);
+            get
+            { return (sbyte)mRawdata[0]; }
         }
 
-        public byte[] ByteArrayValue()
+        public string StringValue
         {
-            return mRawdata;
+            get
+            { return System.Text.UTF8Encoding.Default.GetString(mRawdata); }
         }
+
+        public byte[] ByteArrayValue
+        {
+            get
+            { return mRawdata; }
+        }
+
+
+        public string GetValueString()
+        {
+            if (mType.type == "string") {
+                return StringValue;
+            }
+            if (mIsArray) {
+                return "Array";
+            }
+            switch (type) {
+                case SerializePropertyType.Bool:
+                return BoolValue.ToString();
+                case SerializePropertyType.Byte:
+                return ByteValue.ToString();
+                case SerializePropertyType.Double:
+                return DoubleValue.ToString();
+                case SerializePropertyType.Float:
+                return FloatValue.ToString();
+                case SerializePropertyType.Int:
+                return IntValue.ToString();
+                case SerializePropertyType.Long:
+                return LongValue.ToString();
+                case SerializePropertyType.SByte:
+                return SByteValue.ToString();
+                case SerializePropertyType.Short:
+                return ShortValue.ToString();
+                case SerializePropertyType.UInt:
+                return UIntValue.ToString();
+                case SerializePropertyType.ULong:
+                return ULongValue.ToString();
+                case SerializePropertyType.UShort:
+                return UShortValue.ToString();
+            }
+            return "";
+        }
+
+        public override string ToString()
+        {
+            string finalStr = "";
+            string tabStr = "";
+            var it = parent;
+            while (it != null) {
+                tabStr += "   ";
+                it = it.parent;
+            }
+
+            finalStr = mType.type + " " + Name;
+            if (type != SerializePropertyType.Base) {
+                finalStr += ":" + GetValueString() + "\n";
+            } else {
+                finalStr += "\n";
+            }
+            if (children.Count > 0) {
+                finalStr = finalStr + tabStr + "{\n";
+                for (int i = 0; i < children.Count; i++) {
+                    finalStr = finalStr + tabStr + "    " + children[i].ToString();
+                }
+                finalStr = finalStr + tabStr + "}\n";
+            }
+            return finalStr;
+        }
+
         #endregion
 
     }

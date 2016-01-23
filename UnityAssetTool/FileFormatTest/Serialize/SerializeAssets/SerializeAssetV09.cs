@@ -10,41 +10,52 @@ namespace FileFormatTest
     public class SerializeAssetV09 : SerializeDataStruct
     {
 
+
         public SerializeAssetHeader header = new SerializeAssetHeader();
 
         public string UnityVersion;
         public int attributes;
-        //type tree
-        public bool embedded;
-        public int numOfBaseClasses;
-        public BaseClass[] classes;
+
+        public int numOfTypeTrees;
+        public SerializeTypeTree[] typeTrees;
 
         //object info table
         public int numOfObjects;
-        public AssetObject[] objectInfos;
+        public SerializeAssetObject[] objectInfos;
 
+        public int numOfFileIdentifiers;
+        public SerializeFileIdentifier[] fileIdentifiers;
 
-        public override  void UnSerialize(DataReader br)
+        public override void UnSerialize(DataReader data)
         {
 
-            header.UnSerialize(br);
-            br.byteOrder = DataReader.ByteOrder.Little;
-            UnityVersion = br.ReadStringNull();
-            attributes = br.ReadInt32();
-            embedded = br.ReadBool();
-            numOfBaseClasses = br.ReadInt32();
-            classes = new BaseClass[numOfBaseClasses];
-            for (int i = 0; i < numOfBaseClasses; i++) {
-                classes[i] = new BaseClass(embedded);
-                classes[i].UnSerialize(br);
+            header.UnSerialize(data);
+            data.byteOrder = DataReader.ByteOrder.Little;
+            UnityVersion = data.ReadStringNull();
+            attributes = data.ReadInt32();
+
+            numOfTypeTrees = data.ReadInt32();
+            typeTrees = new SerializeTypeTree[numOfTypeTrees];
+            
+            for (int i = 0; i < numOfTypeTrees; i++) {
+                typeTrees[i] = new SerializeTypeTree();
+                typeTrees[i].UnSerialize(data);
+            }
+            //padding
+            data.ReadInt32();
+
+            numOfObjects = data.ReadInt32();
+            objectInfos = new SerializeAssetObject[numOfObjects];
+            for (int i = 0; i < numOfObjects; i++) {
+                objectInfos[i] = new SerializeAssetObject((int)header.DataOffset);
+                objectInfos[i].UnSerialize(data);
             }
 
-            numOfObjects = br.ReadInt32();
-            br.Align(4);
-            objectInfos = new AssetObject[numOfObjects];
-            for (int i = 0; i < numOfObjects; i++) {
-                objectInfos[i] = new AssetObject((int)header.DataOffset);
-                objectInfos[i].UnSerialize(br);
+            numOfFileIdentifiers = data.ReadInt32();
+            fileIdentifiers = new SerializeFileIdentifier[numOfFileIdentifiers];
+            for (int i = 0; i < numOfFileIdentifiers; i++) {
+                fileIdentifiers[i] = new SerializeFileIdentifier();
+                fileIdentifiers[i].UnSerialize(data);
             }
         }
 
@@ -58,7 +69,7 @@ namespace FileFormatTest
             public uint DataOffset;
             public byte endianness;
             public byte[] reserved;
-            
+
             public override void UnSerialize(DataReader data)
             {
                 data.byteOrder = DataReader.ByteOrder.Big;
@@ -73,73 +84,73 @@ namespace FileFormatTest
 
 
 
-        public class BaseClass : SerializeDataStruct
+        public class SerializeTypeTree : SerializeDataStruct
         {
             public int ClassID;
-            public byte[] hash;
-            public byte[] oldhash;
-            public int fildsCount;
-            public int strTableSize;
-            public BaseClassType[] types;
-            public byte[] stringTable;
-            private bool isEmbedded;
-            public BaseClass(bool embedded)
+            public SerializeTypeTreeData rootType;
+
+            public override void UnSerialize(DataReader data)
             {
-                isEmbedded = embedded;
+                ClassID = data.ReadInt32();
+                rootType = new SerializeTypeTreeData();
+                rootType.UnSerialize(data);
+
             }
 
-            public override void UnSerialize(DataReader br)
+            private void readTypeDatas(DataReader data)
             {
-                ClassID = br.ReadInt32();
-                if (ClassID < 0) {
-                    hash = br.ReadBytes(16);
-                } 
-                oldhash = br.ReadBytes(16);
-                if (isEmbedded) {
-                    fildsCount = br.ReadInt32();
-                    strTableSize = br.ReadInt32();
-                    types = new BaseClassType[fildsCount];
-                    for (int i = 0; i < fildsCount; i++) {
-                        types[i] = new BaseClassType();
-                        types[i].UnSerialize(br);
-                    }
-                    stringTable = br.ReadBytes(strTableSize);
+                SerializeTypeTreeData node = new SerializeTypeTreeData();
+                node.UnSerialize(data);
+                int numOfChildren = data.ReadInt32();
+                for (int i = 0; i < numOfChildren; i++) {
+                    readTypeDatas(data);
                 }
             }
         }
 
-        public class BaseClassType : SerializeDataStruct
+        public class SerializeTypeTreeData : SerializeDataStruct
         {
-            public short version;
-            public byte treeLevel;
-            public bool isArray;
-            public int typeOffset;
-            public int nameOffset;
+            public string type;
+            public string name;
             public int size;
             public int index;
+            /// <summary>
+            /// 1 == true
+            /// </summary>
+            public int isArray;
+            public int version;
             public int metaFlag;
-            public override void UnSerialize(DataReader br)
+
+            public int numOfChildren;
+            public SerializeTypeTreeData[] children;
+
+            public override void UnSerialize(DataReader data)
             {
-                version = br.ReadInt16();
-                treeLevel = br.ReadByte();
-                isArray = br.ReadBool();
-                typeOffset = br.ReadInt32();
-                nameOffset = br.ReadInt32();
-                size = br.ReadInt32();
-                index = br.ReadInt32();
-                metaFlag = br.ReadInt32();
+                type = data.ReadStringNull();
+                name = data.ReadStringNull();
+                size = data.ReadInt32();
+                index = data.ReadInt32();
+                isArray = data.ReadInt32();
+                version = data.ReadInt32();
+                metaFlag = data.ReadInt32();
+                numOfChildren = data.ReadInt32();
+                children = new SerializeTypeTreeData[numOfChildren];
+                for (int i = 0; i < numOfChildren; i++) {
+                    children[i] = new SerializeTypeTreeData();
+                    children[i].UnSerialize(data);
+                }
             }
         }
 
-        public class AssetObject : SerializeDataStruct
+        public class SerializeAssetObject : SerializeDataStruct
         {
             private int mDataOffset;
-            public AssetObject(int dataOffet)
+            public SerializeAssetObject(int dataOffet)
             {
                 mDataOffset = dataOffet;
             }
 
-            public long PathID;
+            public uint PathID;
             // Object data offset
             public uint offset;
 
@@ -155,23 +166,42 @@ namespace FileFormatTest
             // set to 1 if destroyed object instances are stored?
             public short isDestroyed;
 
-            public byte[] reserved;
-
-            public byte [] data;
+            public byte[] data;
 
             public override void UnSerialize(DataReader br)
             {
-                PathID = br.ReadInt64();
+                PathID = br.ReadUint32();
                 offset = br.ReadUint32();
                 length = br.ReadUint32();
                 typeID = br.ReadInt32();
                 classID = br.ReadInt16();
                 isDestroyed = br.ReadInt16();
-                reserved = br.ReadBytes(4);
                 data = br.GetRangeBytes((uint)(mDataOffset + offset), length);
             }
         }
 
+
+        public class SerializeFileIdentifier : SerializeDataStruct
+        {
+            public string assetPath;
+            public long guidMost;
+            public long guidLeast;
+            public int type;
+            public string filePath;
+
+            public override void UnSerialize(DataReader data)
+            {
+                assetPath = data.ReadStringNull();
+                var oldOrder = data.byteOrder;
+                data.byteOrder = DataReader.ByteOrder.Big;
+                guidMost = data.ReadInt64();
+                guidLeast = data.ReadInt64();
+                data.byteOrder = oldOrder;
+                type = data.ReadInt32();
+                filePath = data.ReadStringNull();
+
+            }
+        }
         #endregion
     }
 

@@ -4,18 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-
+using System.Drawing;
+using System.Drawing.Imaging;
 namespace FileFormatTest
 {
     public class AssetsV15Extrator : IAssetsExtrator
     {
 
+
+
         private class TextAssetExtrator : ISerializeObjectExtrator
         {
             public void Extract(SerializeObject obj, string outputPath)
             {
-                string name = obj.FindProperty("Base.m_Name").StringValue();
-                string script = obj.FindProperty("Base.m_Script").StringValue();
+                string name = obj.FindProperty("Base.m_Name").StringValue;
+                string script = obj.FindProperty("Base.m_Script").StringValue;
                 outputPath = outputPath + "/" + name + ".txt";
                 if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {
                     Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
@@ -32,7 +35,25 @@ namespace FileFormatTest
         {
             public void Extract(SerializeObject obj, string outputPath)
             {
-                throw new NotImplementedException();
+                string m_Name = obj.FindProperty("Base.m_Name").StringValue;
+                int m_Width = obj.FindProperty("Base.m_Width").IntValue;
+                int m_Height = obj.FindProperty("Base.m_Height").IntValue;
+                int m_CompleteImageSize = obj.FindProperty("Base.m_CompleteImageSize").IntValue;
+                int m_TextureFormat = obj.FindProperty("Base.m_TextureFormat").IntValue;
+                byte[] data = obj.FindProperty("Base.image data").ByteArrayValue;
+                Bitmap bmp = new Bitmap(m_Width, m_Height,PixelFormat.Format32bppArgb);
+                var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+                int bytes = Math.Abs(bmpData.Stride) * bmp.Height;
+                IntPtr ptr = bmpData.Scan0;
+                System.Runtime.InteropServices.Marshal.Copy(data, 0, ptr, bytes);
+
+
+                bmp.UnlockBits(bmpData);
+                outputPath = outputPath + "/" + m_Name + ".bmp";
+                if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {
+                    Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
+                }
+                bmp.Save(outputPath);
             }
         }
 
@@ -41,7 +62,9 @@ namespace FileFormatTest
 
         public AssetsV15Extrator()
         {
+            mObjectExtratorDic["Default"] = new DefaultAssetExtrator();
             mObjectExtratorDic["TextAsset"] = new TextAssetExtrator();
+            mObjectExtratorDic["Texture2D"] = new Texture2DExtrator();
         }
 
         public void Extract(SerializeDataStruct assets,TypeTreeDataBase typeTreeDB,string outputPath)
@@ -50,14 +73,19 @@ namespace FileFormatTest
             foreach (var objinfo in asset.objectInfos) {
                 var typeTree = typeTreeDB.GetType(15, objinfo.classID);
                 if (typeTree != null) {
-                    
-                    if (mObjectExtratorDic.ContainsKey(typeTree.type)) {
-                        SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
-                        var extrator = mObjectExtratorDic[typeTree.type];
-                        extrator.Extract(sobj, outputPath + "/" + typeTree.type);
+                    SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
+                    ISerializeObjectExtrator extrator;
+                    if(!mObjectExtratorDic.TryGetValue(typeTree.type,out extrator)){
+                        extrator = this.GetDefaultSerializeObjectExtrator();
                     }
+                    extrator.Extract(sobj, outputPath + "/" + typeTree.type);
                 }
             }
+        }
+
+        public ISerializeObjectExtrator GetDefaultSerializeObjectExtrator()
+        {
+            return mObjectExtratorDic["Default"];
         }
     }
 }
