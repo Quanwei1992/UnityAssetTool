@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace FileFormatTest
+namespace UnityAssetTool
 {
     public class DataReader
     {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FileFormatTest.Properties {
+namespace UnityAssetTool.Properties {
     using System;
     
     

@@ -65,6 +65,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command\BaseCommand.cs" />
+    <Compile Include="Command\FilesCommand.cs" />
+    <Compile Include="Command\Option.cs" />
+    <Compile Include="Command\RecursiveFileCommand.cs" />
     <Compile Include="Extractor\AssetsExtractor\AssetsV09Extrator.cs" />
     <Compile Include="Extractor\AssetsExtractor\AssetsV15Extrator.cs" />
     <Compile Include="Extractor\AssetsExtractor\DefaultAssetExtrator.cs" />
@@ -179,7 +183,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Command\" />
+    <Folder Include="Command\Asset\" />
+    <Folder Include="Command\Bundle\" />
+    <Folder Include="Command\TypeTreeDataBase\" />
     <Folder Include="Extractor\AssetBundleExtract\" />
   </ItemGroup>
   <ItemGroup>

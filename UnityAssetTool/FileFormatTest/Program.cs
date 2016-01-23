@@ -5,17 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Xml.Serialization;
-namespace FileFormatTest
+using CommandLine;
+using CommandLine.Parsing;
+using CommandLine.Text;
+namespace UnityAssetTool
 {
     class Program
     {
+
         static void Main(string[] args)
         {
+
+
+
+            var options = new Command.Options();
+            CommandLine.Parser.Default.ParseArguments(args, options, (str, obj) => {
+                Console.WriteLine(str);
+            });
             //LearnTypeTree();
             //AssetUnserializeTest();
             //AssetBundleExtractTest();
-            AssetExtractTest();
-            Console.WriteLine("Done\nPlease Enter Any Key Contiue..");
+            //AssetExtractTest();
+            Console.WriteLine(options.commandName+"\nDone\nPlease Enter Any Key Contiue..");
             Console.Read();
 
         }

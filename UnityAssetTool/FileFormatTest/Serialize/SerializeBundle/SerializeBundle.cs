@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using SevenZip.Compression;
 using System.IO;
 
-namespace FileFormatTest
+namespace UnityAssetTool
 {
     class SerializeBundle : SerializeDataStruct
     {

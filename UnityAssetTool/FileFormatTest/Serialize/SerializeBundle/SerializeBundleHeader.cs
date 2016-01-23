@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FileFormatTest
+namespace UnityAssetTool
 {
     //支持V3及以上
     class SerializeBundleHeader :　SerializeDataStruct

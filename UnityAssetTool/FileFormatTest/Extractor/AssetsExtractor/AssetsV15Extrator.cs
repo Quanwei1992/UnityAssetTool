@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
-namespace FileFormatTest
+namespace UnityAssetTool
 {
     public class AssetsV15Extrator : IAssetsExtrator
     {
