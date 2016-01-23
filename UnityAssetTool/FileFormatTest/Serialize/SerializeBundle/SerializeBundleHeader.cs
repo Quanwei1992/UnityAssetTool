@@ -17,7 +17,7 @@ namespace FileFormatTest
         public uint completeFileSize;
         public uint dataHeaderSize;
         public byte[] resvers;
-        public override void UnSerialize(DataReader br)
+        public override void DeSerialize(DataReader br)
         {
             br.byteOrder = DataReader.ByteOrder.Big;
             signature = br.ReadStringNull();

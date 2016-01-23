@@ -12,7 +12,7 @@ namespace FileFormatTest
         public uint offset;
         public uint size;
         public byte[] assetData;
-        public override void UnSerialize(DataReader data)
+        public override void DeSerialize(DataReader data)
         {
             name = data.ReadStringNull();
             offset = data.ReadUint32();

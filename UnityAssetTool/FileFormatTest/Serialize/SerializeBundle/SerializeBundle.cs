@@ -14,9 +14,9 @@ namespace FileFormatTest
         public int numOfEntryCount;
         public SerializeBundleEntry[] entrys;
 
-        public override void UnSerialize(DataReader data)
+        public override void DeSerialize(DataReader data)
         {
-            header.UnSerialize(data);
+            header.DeSerialize(data);
             uint n1 = BitConverter.ToUInt32(new byte[] { 1, 0, 0, 0 }, 0);
             data.byteOrder = DataReader.ByteOrder.Little;
             //compress with lzma
@@ -37,7 +37,7 @@ namespace FileFormatTest
             entrys = new SerializeBundleEntry[numOfEntryCount];
             for (int i = 0; i < numOfEntryCount; i++) {
                 entrys[i] = new SerializeBundleEntry();
-                entrys[i].UnSerialize(data);
+                entrys[i].DeSerialize(data);
             }
         }
 

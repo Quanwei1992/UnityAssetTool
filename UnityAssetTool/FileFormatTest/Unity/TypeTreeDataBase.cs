@@ -127,7 +127,7 @@ namespace FileFormatTest
             }
         }
 
-        public void UnSerialize(Stream stream)
+        public void DeSerialize(Stream stream)
         {
             if (stream.Length <= 0) return;
             BinaryReader br = new BinaryReader(stream);

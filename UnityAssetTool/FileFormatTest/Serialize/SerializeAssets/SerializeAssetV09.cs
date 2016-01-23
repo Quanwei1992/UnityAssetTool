@@ -26,10 +26,10 @@ namespace FileFormatTest
         public int numOfFileIdentifiers;
         public SerializeFileIdentifier[] fileIdentifiers;
 
-        public override void UnSerialize(DataReader data)
+        public override void DeSerialize(DataReader data)
         {
 
-            header.UnSerialize(data);
+            header.DeSerialize(data);
             data.byteOrder = DataReader.ByteOrder.Little;
             UnityVersion = data.ReadStringNull();
             attributes = data.ReadInt32();
@@ -39,7 +39,7 @@ namespace FileFormatTest
             
             for (int i = 0; i < numOfTypeTrees; i++) {
                 typeTrees[i] = new SerializeTypeTree();
-                typeTrees[i].UnSerialize(data);
+                typeTrees[i].DeSerialize(data);
             }
             //padding
             data.ReadInt32();
@@ -48,14 +48,14 @@ namespace FileFormatTest
             objectInfos = new SerializeAssetObject[numOfObjects];
             for (int i = 0; i < numOfObjects; i++) {
                 objectInfos[i] = new SerializeAssetObject((int)header.DataOffset);
-                objectInfos[i].UnSerialize(data);
+                objectInfos[i].DeSerialize(data);
             }
 
             numOfFileIdentifiers = data.ReadInt32();
             fileIdentifiers = new SerializeFileIdentifier[numOfFileIdentifiers];
             for (int i = 0; i < numOfFileIdentifiers; i++) {
                 fileIdentifiers[i] = new SerializeFileIdentifier();
-                fileIdentifiers[i].UnSerialize(data);
+                fileIdentifiers[i].DeSerialize(data);
             }
         }
 
@@ -70,7 +70,7 @@ namespace FileFormatTest
             public byte endianness;
             public byte[] reserved;
 
-            public override void UnSerialize(DataReader data)
+            public override void DeSerialize(DataReader data)
             {
                 data.byteOrder = DataReader.ByteOrder.Big;
                 MetaDataSize = data.ReadInt32();
@@ -89,18 +89,18 @@ namespace FileFormatTest
             public int ClassID;
             public SerializeTypeTreeData rootType;
 
-            public override void UnSerialize(DataReader data)
+            public override void DeSerialize(DataReader data)
             {
                 ClassID = data.ReadInt32();
                 rootType = new SerializeTypeTreeData();
-                rootType.UnSerialize(data);
+                rootType.DeSerialize(data);
 
             }
 
             private void readTypeDatas(DataReader data)
             {
                 SerializeTypeTreeData node = new SerializeTypeTreeData();
-                node.UnSerialize(data);
+                node.DeSerialize(data);
                 int numOfChildren = data.ReadInt32();
                 for (int i = 0; i < numOfChildren; i++) {
                     readTypeDatas(data);
@@ -124,7 +124,7 @@ namespace FileFormatTest
             public int numOfChildren;
             public SerializeTypeTreeData[] children;
 
-            public override void UnSerialize(DataReader data)
+            public override void DeSerialize(DataReader data)
             {
                 type = data.ReadStringNull();
                 name = data.ReadStringNull();
@@ -137,7 +137,7 @@ namespace FileFormatTest
                 children = new SerializeTypeTreeData[numOfChildren];
                 for (int i = 0; i < numOfChildren; i++) {
                     children[i] = new SerializeTypeTreeData();
-                    children[i].UnSerialize(data);
+                    children[i].DeSerialize(data);
                 }
             }
         }
@@ -168,7 +168,7 @@ namespace FileFormatTest
 
             public byte[] data;
 
-            public override void UnSerialize(DataReader br)
+            public override void DeSerialize(DataReader br)
             {
                 PathID = br.ReadUint32();
                 offset = br.ReadUint32();
@@ -189,7 +189,7 @@ namespace FileFormatTest
             public int type;
             public string filePath;
 
-            public override void UnSerialize(DataReader data)
+            public override void DeSerialize(DataReader data)
             {
                 assetPath = data.ReadStringNull();
                 var oldOrder = data.byteOrder;

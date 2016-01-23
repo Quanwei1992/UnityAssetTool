@@ -170,5 +170,23 @@ namespace FileFormatTest
             return root;
         }
         #endregion
+
+
+        public static TypeTreeDataBase LoadTypeTreeDataBase(string path)
+        {
+            FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Read);
+            TypeTreeDataBase db = new TypeTreeDataBase();
+            db.DeSerialize(fs);
+            fs.Dispose();
+            return db;
+        }
+
+        public static void SaveTypeTreeDataBase(string path, TypeTreeDataBase db)
+        {
+            FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write);
+            db.Serialize(fs);
+            fs.Flush();
+            fs.Dispose();
+        }
     }
 }

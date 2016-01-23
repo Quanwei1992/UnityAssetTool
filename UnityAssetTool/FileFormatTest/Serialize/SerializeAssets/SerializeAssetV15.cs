@@ -25,10 +25,10 @@ namespace FileFormatTest
         public AssetObject[] objectInfos;
 
 
-        public override  void UnSerialize(DataReader br)
+        public override  void DeSerialize(DataReader br)
         {
 
-            header.UnSerialize(br);
+            header.DeSerialize(br);
             br.byteOrder = DataReader.ByteOrder.Little;
             UnityVersion = br.ReadStringNull();
             attributes = br.ReadInt32();
@@ -37,7 +37,7 @@ namespace FileFormatTest
             classes = new BaseClass[numOfBaseClasses];
             for (int i = 0; i < numOfBaseClasses; i++) {
                 classes[i] = new BaseClass(embedded);
-                classes[i].UnSerialize(br);
+                classes[i].DeSerialize(br);
             }
 
             numOfObjects = br.ReadInt32();
@@ -45,7 +45,7 @@ namespace FileFormatTest
             objectInfos = new AssetObject[numOfObjects];
             for (int i = 0; i < numOfObjects; i++) {
                 objectInfos[i] = new AssetObject((int)header.DataOffset);
-                objectInfos[i].UnSerialize(br);
+                objectInfos[i].DeSerialize(br);
             }
         }
 
@@ -60,7 +60,7 @@ namespace FileFormatTest
             public byte endianness;
             public byte[] reserved;
             
-            public override void UnSerialize(DataReader data)
+            public override void DeSerialize(DataReader data)
             {
                 data.byteOrder = DataReader.ByteOrder.Big;
                 MetaDataSize = data.ReadInt32();
@@ -89,7 +89,7 @@ namespace FileFormatTest
                 isEmbedded = embedded;
             }
 
-            public override void UnSerialize(DataReader br)
+            public override void DeSerialize(DataReader br)
             {
                 ClassID = br.ReadInt32();
                 if (ClassID < 0) {
@@ -102,7 +102,7 @@ namespace FileFormatTest
                     types = new BaseClassType[fildsCount];
                     for (int i = 0; i < fildsCount; i++) {
                         types[i] = new BaseClassType();
-                        types[i].UnSerialize(br);
+                        types[i].DeSerialize(br);
                     }
                     stringTable = br.ReadBytes(strTableSize);
                 }
@@ -119,7 +119,7 @@ namespace FileFormatTest
             public int size;
             public int index;
             public int metaFlag;
-            public override void UnSerialize(DataReader br)
+            public override void DeSerialize(DataReader br)
             {
                 version = br.ReadInt16();
                 treeLevel = br.ReadByte();
@@ -160,7 +160,7 @@ namespace FileFormatTest
 
             public byte [] data;
 
-            public override void UnSerialize(DataReader br)
+            public override void DeSerialize(DataReader br)
             {
                 PathID = br.ReadInt64();
                 offset = br.ReadUint32();

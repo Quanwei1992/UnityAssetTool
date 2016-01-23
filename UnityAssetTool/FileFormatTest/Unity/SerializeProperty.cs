@@ -86,7 +86,7 @@ namespace FileFormatTest
         }
 
 
-        public override void UnSerialize(DataReader br)
+        public override void DeSerialize(DataReader br)
         {
             
             int size = 0;
@@ -185,7 +185,7 @@ namespace FileFormatTest
             var chirenType = mType.GetChildren();
             foreach (var child in chirenType) {
                 SerializeProperty property = new SerializeProperty(child);
-                property.UnSerialize(br);
+                property.DeSerialize(br);
                 AddChild(property);
             }
         }

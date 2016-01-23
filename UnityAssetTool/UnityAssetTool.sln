@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileFormatTest", "FileFormatTest\FileFormatTest.csproj", "{7BB9F650-1E6C-424F-A11E-E1D6FE0E74A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityAssetsTool", "FileFormatTest\UnityAssetsTool.csproj", "{7BB9F650-1E6C-424F-A11E-E1D6FE0E74A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

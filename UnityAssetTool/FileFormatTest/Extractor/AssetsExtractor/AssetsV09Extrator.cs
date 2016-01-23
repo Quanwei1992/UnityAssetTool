@@ -8,8 +8,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 namespace FileFormatTest
 {
-    public class AssetsV15Extrator : IAssetsExtrator
+    public class AssetsV09Extrator : IAssetsExtrator
     {
+
+
 
         private class TextAssetExtrator : ISerializeObjectExtrator
         {
@@ -58,7 +60,7 @@ namespace FileFormatTest
 
         private Dictionary<string, ISerializeObjectExtrator> mObjectExtratorDic = new Dictionary<string, ISerializeObjectExtrator>();
 
-        public AssetsV15Extrator()
+        public AssetsV09Extrator()
         {
             mObjectExtratorDic["Default"] = new DefaultAssetExtrator();
             mObjectExtratorDic["TextAsset"] = new TextAssetExtrator();
@@ -67,17 +69,20 @@ namespace FileFormatTest
 
         public void Extract(SerializeDataStruct assets,TypeTreeDataBase typeTreeDB,string outputPath)
         {
-            SerializeAssetV15 asset = assets as SerializeAssetV15;
+            SerializeAssetV09 asset = assets as SerializeAssetV09;
             foreach (var objinfo in asset.objectInfos) {
-                var typeTree = typeTreeDB.GetType(15, objinfo.classID);
-                if (typeTree != null) {
-                    SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
-                    ISerializeObjectExtrator extrator;
-                    if(!mObjectExtratorDic.TryGetValue(typeTree.type,out extrator)){
-                        extrator = this.GetDefaultSerializeObjectExtrator();
+                if (typeTreeDB.Contains(9, objinfo.classID)) {
+                    var typeTree = typeTreeDB.GetType(9, objinfo.classID);
+                    if (typeTree != null) {
+                        SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
+                        ISerializeObjectExtrator extrator;
+                        if (!mObjectExtratorDic.TryGetValue(typeTree.type, out extrator)) {
+                            extrator = this.GetDefaultSerializeObjectExtrator();
+                        }
+                        extrator.Extract(sobj, outputPath + "/" + typeTree.type);
                     }
-                    extrator.Extract(sobj, outputPath + "/" + typeTree.type);
                 }
+                
             }
         }
 

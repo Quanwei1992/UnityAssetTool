@@ -8,7 +8,7 @@ namespace FileFormatTest
 {
     public class SerializeDataStruct
     {
-        public virtual void UnSerialize(DataReader data) { }
+        public virtual void DeSerialize(DataReader data) { }
         public override string ToString()
         {
             string str = GetType().Name + ":\n{\n";

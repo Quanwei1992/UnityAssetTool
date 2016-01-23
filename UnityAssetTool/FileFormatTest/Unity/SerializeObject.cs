@@ -16,7 +16,7 @@ namespace FileFormatTest
             rootProperty = new SerializeProperty(type);
             MemoryStream ms = new MemoryStream(rawData);
             DataReader br = new DataReader(ms);
-            rootProperty.UnSerialize(br);
+            rootProperty.DeSerialize(br);
             br.Close();
             ms.Close();
         }
