@@ -210,3 +210,6 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+/UnityAssetTool/UnityAssetTool/extractObjects
+/UnityAssetTool/UnityAssetTool/TextAsset
+/UnityAssetTool/UnityAssetTool/Texture2D

@@ -13,6 +13,9 @@ namespace UnityAssetTool.Command
         [VerbOption("ttdb-learn", HelpText = "learn typetree form asset bundle or asset file.")]
         public TypeTreeDataBaseLearn TypeTreeDatabase_Learn { get; set; }
 
+        [VerbOption("ttdb-show",HelpText ="show typetree info")]
+        public TypeTreeDataBaseShow TypeTreeDatabase_show { get; set; }
+
         [VerbOption("asset-unpack",HelpText ="extract asset objects.")]
         public AssetUnpackCommand asset_unpack { get; set; }
 

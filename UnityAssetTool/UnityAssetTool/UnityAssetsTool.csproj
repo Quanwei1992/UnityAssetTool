@@ -13,7 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
+    <PublishUrl>E:\tools\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -23,9 +23,11 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -49,6 +51,24 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>UnityAssetTool.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>0F059AE1534895DB39957961732DC260DCD7CC5D</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>UnityAssetsTool_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -74,6 +94,7 @@
     <Compile Include="Command\FileCommand.cs" />
     <Compile Include="Command\RecursiveFileCommand.cs" />
     <Compile Include="Command\TypeTreeDataBase\TypeTreeDataBaseLearnCommand.cs" />
+    <Compile Include="Command\TypeTreeDataBase\TypeTreeDataBaseShow.cs" />
     <Compile Include="Command\UnityAssetTools.cs" />
     <Compile Include="Extractor\AssetsExtractor\AssetsV09Extrator.cs" />
     <Compile Include="Extractor\AssetsExtractor\AssetsV15Extrator.cs" />
@@ -171,10 +192,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Properties\app.manifest" />
     <None Include="ThirdPart\libcmdline\CommandLine.csproj.DotSettings" />
     <None Include="ThirdPart\libcmdline\CommandLine35.v11.suo" />
     <None Include="ThirdPart\libcmdline\Settings.StyleCop" />
     <None Include="ThirdPart\libcmdline\StyleCop.Cache" />
+    <None Include="UnityAssetsTool_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

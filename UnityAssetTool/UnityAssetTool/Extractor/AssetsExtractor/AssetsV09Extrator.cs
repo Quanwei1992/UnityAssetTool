@@ -73,15 +73,20 @@ namespace UnityAssetTool
             SerializeAssetV09 asset = assets as SerializeAssetV09;
             foreach (var objinfo in asset.objectInfos) {
                 if (typeTreeDB.Contains(9, objinfo.classID)) {
-                    var typeTree = typeTreeDB.GetType(9, objinfo.classID);
-                    if (typeTree != null) {
-                        SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
-                        ISerializeObjectExtrator extrator;
-                        if (!mObjectExtratorDic.TryGetValue(typeTree.type, out extrator)) {
-                            extrator = this.GetDefaultSerializeObjectExtrator();
+                    try {
+                        var typeTree = typeTreeDB.GetType(9, objinfo.classID);
+                        if (typeTree != null) {
+                            SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
+                            ISerializeObjectExtrator extrator;
+                            if (!mObjectExtratorDic.TryGetValue(typeTree.type, out extrator)) {
+                                extrator = this.GetDefaultSerializeObjectExtrator();
+                            }
+                            extrator.Extract(sobj, outputPath + "/" + typeTree.type);
                         }
-                        extrator.Extract(sobj, outputPath + "/" + typeTree.type);
+                    } catch {
+                        ExtractRawData(objinfo, outputPath + "/Class" + objinfo.classID + "/");
                     }
+
                 } else {
                     ExtractRawData(objinfo, outputPath + "/Class" + objinfo.classID + "/");
                 }
@@ -93,7 +98,7 @@ namespace UnityAssetTool
         private void ExtractRawData(SerializeAssetV09.SerializeAssetObject obj,string outputPath)
         {
             string name = (gID++)+"_"+ obj.PathID.ToString()+".raw";
-            outputPath = outputPath + "/" + name + ".txt";
+            outputPath = outputPath + "/" + name;
             if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
             }

@@ -21,6 +21,12 @@ namespace UnityAssetTool
             ms.Close();
         }
 
+        public SerializeObject(TypeTree type, DataReader data)
+        {
+            rootProperty = new SerializeProperty(type);
+            rootProperty.DeSerialize(data);
+        }
+
         public SerializeProperty FindProperty(string fullName)
         {
             return rootProperty.FindChild(fullName);

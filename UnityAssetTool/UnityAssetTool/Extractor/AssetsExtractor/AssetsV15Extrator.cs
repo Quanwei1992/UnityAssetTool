@@ -69,7 +69,7 @@ namespace UnityAssetTool
         private void ExtractRawData(SerializeAssetV15.AssetObject obj, string outputPath)
         {
             string name = (gID++) + "_" + obj.PathID.ToString() + ".raw";
-            outputPath = outputPath + "/" + name + ".txt";
+            outputPath = outputPath + "/" + name;
             if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
             }

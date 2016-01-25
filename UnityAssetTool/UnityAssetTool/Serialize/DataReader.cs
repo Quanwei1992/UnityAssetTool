@@ -105,6 +105,11 @@ namespace UnityAssetTool
 
         }
 
+        public object ReadSbyte()
+        {
+            return mStream.ReadSByte();
+        }
+
         public uint ReadUInt32()
         {
             var arr = mStream.ReadBytes(4);
@@ -161,6 +166,17 @@ namespace UnityAssetTool
             return sbytes;
 
         }
+
+        internal object readDouble()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal object readFloat()
+        {
+            throw new NotImplementedException();
+        }
+
         public string ReadString()
         {
             return mStream.ReadString();

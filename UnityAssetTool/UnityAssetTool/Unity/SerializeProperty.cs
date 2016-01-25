@@ -12,6 +12,7 @@ namespace UnityAssetTool
     {
         Unkonw,
         Base,
+        Stuct,
         Bool,
         SByte,
         Byte,
@@ -22,7 +23,8 @@ namespace UnityAssetTool
         Long,
         ULong,
         Float,
-        Double
+        Double,
+        String
     }
 
 
@@ -35,6 +37,7 @@ namespace UnityAssetTool
         bool mIsArray = false;
         int arrayLength = 0;
         TypeTree mType;
+        private object value;
         byte[] mRawdata;
        
         public bool IsArray
@@ -86,108 +89,86 @@ namespace UnityAssetTool
         }
 
 
-        public override void DeSerialize(DataReader br)
+
+        private object readValue(TypeTree typeTree, DataReader data)
         {
-            
-            int size = 0;
-            string typeStr = mType.type;
-            if (mType.type == "Array" || mType.type == "TypelessData") {
-                var children = mType.GetChildren();
-                if (children.Length == 2) {
-                    typeStr = children[1].type;
-                    mIsArray = true;
-                }
-            }
-            if (mType.type == "string") {
-                var children = mType.GetChildren();
-                if (children.Length == 1) {
-                    children = children[0].GetChildren();
-                    if (children.Length == 2) {
-                        typeStr = children[1].type;
-                        mIsArray = true;
-                    }
-                }
-            }
-            switch (typeStr) {
-                case "Base":
-                size = (int)br.BaseStream.Length - (int)br.BaseStream.Position;
-                type = SerializePropertyType.Base;
-                break;
+
+            switch (typeTree.type) {
                 case "bool":
-                size = sizeof(bool);
                 type = SerializePropertyType.Bool;
-                break;
+                return data.ReadBool();
                 case "SInt8":
-                size = sizeof(sbyte);
                 type = SerializePropertyType.SByte;
-                break;
+                return data.ReadSbyte();
                 case "char":
                 case "UInt8":
-                size = sizeof(byte);
                 type = SerializePropertyType.Byte;
-                break;
+                return data.ReadByte();
                 case "short":
                 case "SInt16":
-                size = sizeof(short);
                 type = SerializePropertyType.Short;
-                break;
+                return data.ReadInt16();
                 case "unsigned short":
                 case "UInt16":
-                size = sizeof(ushort);
                 type = SerializePropertyType.UShort;
-                break;
+                return data.ReadUInt16();
                 case "int":
                 case "SInt32":
-                size = sizeof(int);
                 type = SerializePropertyType.Int;
-                break;
+                return data.ReadInt32();
                 case "unsigned int":
                 case "UInt32":
-                size = sizeof(uint);
                 type = SerializePropertyType.UInt;
-                break;
+                return data.ReadUint32();
                 case "long":
                 case "SInt64":
-                size = sizeof(long);
                 type = SerializePropertyType.Long;
-                break;
+                return data.ReadInt64();
                 case "unsigned long":
                 case "UInt64":
-                size = sizeof(ulong);
                 type = SerializePropertyType.ULong;
-                break;
+                return data.ReadUInt64();
                 case "float":
-                size = sizeof(float);
                 type = SerializePropertyType.Float;
-                break;
+                return data.readFloat();
                 case "double":
-                size = sizeof(double);
                 type = SerializePropertyType.Double;
+                return data.readDouble();
+                case "string":
+                type = SerializePropertyType.String;
+                int strSize = data.ReadInt32();
+                return UTF8Encoding.Default.GetString(data.ReadBytes(strSize));
+                case "Array":
+                case "TypelessData":
+                arrayLength = data.ReadInt32();
+                mIsArray = true;
+                
                 break;
                 default:
-                type = SerializePropertyType.Base;
-                break;
+                type = SerializePropertyType.Stuct;
+                SerializeObject sobj = new SerializeObject(mType, data);
+                return sobj;
+            }
+        }
+
+        public override void DeSerialize(DataReader data)
+        {
+            if (mType.type == "Base") {
+                var children = mType.GetChildren();
+                foreach (var child in children) {
+                    SerializeProperty property = new SerializeProperty(child);
+                    property.DeSerialize(data);
+                    AddChild(property);
+                }
+            } else {
+                value = readValue(mType, data);
+                if (((mType.metaFlag & TypeTree.FLAG_FORCE_ALIGN) != 0) || IsArray) {
+                    data.Align(4);
+                }
             }
 
-            if (IsArray) {
-                int length = br.ReadInt32();
-                arrayLength = length;
-                mRawdata = br.ReadBytes(length * size);
-                br.Align(4);
-                return;
-            }
-            mRawdata = br.ReadBytes(size);
-            if ((mType.metaFlag & TypeTree.FLAG_FORCE_ALIGN) != 0) {
-                br.Align(4);
-            }
-            if (type != SerializePropertyType.Base) return;
 
-            var chirenType = mType.GetChildren();
-            foreach (var child in chirenType) {
-                SerializeProperty property = new SerializeProperty(child);
-                property.DeSerialize(br);
-                AddChild(property);
-            }
+
         }
 
 
