@@ -7,11 +7,12 @@
     <ProjectGuid>{7BB9F650-1E6C-424F-A11E-E1D6FE0E74A8}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FileFormatTest</RootNamespace>
-    <AssemblyName>FileFormatTest</AssemblyName>
+    <RootNamespace>UnityAssetTool</RootNamespace>
+    <AssemblyName>UnityAssetTool</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -24,7 +25,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -47,6 +47,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>UnityAssetTool.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -65,10 +68,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Command\BaseCommand.cs" />
-    <Compile Include="Command\FilesCommand.cs" />
-    <Compile Include="Command\Option.cs" />
+    <Compile Include="Command\Asset\AssetCommand.cs" />
+    <Compile Include="Command\Asset\AssetUnpackCommand.cs" />
+    <Compile Include="Command\Command.cs" />
+    <Compile Include="Command\FileCommand.cs" />
     <Compile Include="Command\RecursiveFileCommand.cs" />
+    <Compile Include="Command\TypeTreeDataBase\TypeTreeDataBaseLearnCommand.cs" />
+    <Compile Include="Command\UnityAssetTools.cs" />
     <Compile Include="Extractor\AssetsExtractor\AssetsV09Extrator.cs" />
     <Compile Include="Extractor\AssetsExtractor\AssetsV15Extrator.cs" />
     <Compile Include="Extractor\AssetsExtractor\DefaultAssetExtrator.cs" />
@@ -183,9 +189,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Command\Asset\" />
     <Folder Include="Command\Bundle\" />
-    <Folder Include="Command\TypeTreeDataBase\" />
     <Folder Include="Extractor\AssetBundleExtract\" />
   </ItemGroup>
   <ItemGroup>

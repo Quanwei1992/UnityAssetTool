@@ -39,7 +39,7 @@ namespace UnityAssetTool.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FileFormatTest.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("UnityAssetTool.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -112,6 +112,15 @@ namespace UnityAssetTool.Properties {
         public static string TypeStringTableV15 {
             get {
                 return ResourceManager.GetString("TypeStringTableV15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 res/TypeTyeeDataBase.db 的本地化字符串。
+        /// </summary>
+        public static string TypeTreeDataBasePath {
+            get {
+                return ResourceManager.GetString("TypeTreeDataBasePath", resourceCulture);
             }
         }
     }

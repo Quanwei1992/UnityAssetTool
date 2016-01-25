@@ -8,8 +8,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 namespace UnityAssetTool
 {
-    public class AssetsV15Extrator : IAssetsExtrator
+    public class AssetsV09Extrator : IAssetsExtrator
     {
+
+        
+
 
         private class TextAssetExtrator : ISerializeObjectExtrator
         {
@@ -58,7 +61,7 @@ namespace UnityAssetTool
 
         private Dictionary<string, ISerializeObjectExtrator> mObjectExtratorDic = new Dictionary<string, ISerializeObjectExtrator>();
 
-        public AssetsV15Extrator()
+        public AssetsV09Extrator()
         {
             mObjectExtratorDic["Default"] = new DefaultAssetExtrator();
             mObjectExtratorDic["TextAsset"] = new TextAssetExtrator();
@@ -67,18 +70,38 @@ namespace UnityAssetTool
 
         public void Extract(SerializeDataStruct assets,TypeTreeDataBase typeTreeDB,string outputPath)
         {
-            SerializeAssetV15 asset = assets as SerializeAssetV15;
+            SerializeAssetV09 asset = assets as SerializeAssetV09;
             foreach (var objinfo in asset.objectInfos) {
-                var typeTree = typeTreeDB.GetType(15, objinfo.classID);
-                if (typeTree != null) {
-                    SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
-                    ISerializeObjectExtrator extrator;
-                    if(!mObjectExtratorDic.TryGetValue(typeTree.type,out extrator)){
-                        extrator = this.GetDefaultSerializeObjectExtrator();
+                if (typeTreeDB.Contains(9, objinfo.classID)) {
+                    var typeTree = typeTreeDB.GetType(9, objinfo.classID);
+                    if (typeTree != null) {
+                        SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
+                        ISerializeObjectExtrator extrator;
+                        if (!mObjectExtratorDic.TryGetValue(typeTree.type, out extrator)) {
+                            extrator = this.GetDefaultSerializeObjectExtrator();
+                        }
+                        extrator.Extract(sobj, outputPath + "/" + typeTree.type);
                     }
-                    extrator.Extract(sobj, outputPath + "/" + typeTree.type);
+                } else {
+                    ExtractRawData(objinfo, outputPath + "/Class" + objinfo.classID + "/");
                 }
+
             }
+        }
+
+        int gID = 0;
+        private void ExtractRawData(SerializeAssetV09.SerializeAssetObject obj,string outputPath)
+        {
+            string name = (gID++)+"_"+ obj.PathID.ToString()+".raw";
+            outputPath = outputPath + "/" + name + ".txt";
+            if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {
+                Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
+            }
+            var bytes = obj.data;
+            var fs = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write);
+            fs.Write(bytes, 0, bytes.Length);
+            fs.Flush();
+            fs.Dispose();
         }
 
         public ISerializeObjectExtrator GetDefaultSerializeObjectExtrator()

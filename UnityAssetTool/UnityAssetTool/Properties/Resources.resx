@@ -218,4 +218,7 @@ Vector3f
 Vector4f
 m_ScriptingClassIdentifier</value>
   </data>
+  <data name="TypeTreeDataBasePath" xml:space="preserve">
+    <value>res/TypeTyeeDataBase.db</value>
+  </data>
 </root>

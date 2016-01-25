@@ -51,6 +51,23 @@ namespace UnityAssetTool
             return version;
         }
 
+        static public bool IsBundle(string path)
+        {
+            try {
+                FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+                DataReader data = new DataReader(fs);
+                data.byteOrder = DataReader.ByteOrder.Big;
+                string signature = data.ReadStringNull();
+                data.Close();
+                fs.Dispose();
+                if (signature.Contains("Unity")) {
+                    return true;
+                }
+                return false;
+            } catch {
+                return false;
+            }
+        }
 
 
         public static TypeTreeDataBase GenerateTypeTreeDataBase(SerializeDataStruct asset)
@@ -152,7 +169,7 @@ namespace UnityAssetTool
             foreach (var typetree in asset.typeTrees) {
                 var tree = GenerateTypeTreeV9(typetree.rootType);
                 DB.Put(9, typetree.ClassID, tree);
-                Console.WriteLine(tree);     
+                //Console.WriteLine(tree);     
             }
             return DB;
         }
@@ -174,10 +191,14 @@ namespace UnityAssetTool
 
         public static TypeTreeDataBase LoadTypeTreeDataBase(string path)
         {
-            FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Read);
             TypeTreeDataBase db = new TypeTreeDataBase();
-            db.DeSerialize(fs);
-            fs.Dispose();
+            try {
+                FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Read);
+                db.DeSerialize(fs);
+                fs.Dispose();
+            } catch (Exception e) {
+
+            }
             return db;
         }
 
