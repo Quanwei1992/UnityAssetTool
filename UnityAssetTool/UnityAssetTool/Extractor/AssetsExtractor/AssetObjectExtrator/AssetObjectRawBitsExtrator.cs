@@ -7,7 +7,7 @@ using System.IO;
 
 namespace UnityAssetTool
 {
-    public class DefaultAssetExtrator : ISerializeObjectExtrator
+    public class AssetObjectRawBitsExtrator : ISerializeObjectExtrator
     {
         static int gID = 0;
         public void Extract(SerializeObject obj, string outputPath)

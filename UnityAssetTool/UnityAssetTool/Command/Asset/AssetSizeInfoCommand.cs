@@ -29,43 +29,21 @@ namespace UnityAssetTool.Command
                 Console.WriteLine("{0,-30} Size:{1,-15}kb {2,-15}%", className, kvp.Value / 1024.0f, (kvp.Value / (float)totalSize) * 100);
             }
         }
-        public override void runAssetFile(SerializeDataStruct asset)
+        public override void runAssetFile(Asset asset)
         {
-            if (asset is SerializeAssetV09) {
-                var asset09 = asset as SerializeAssetV09;
-                foreach (var obj in asset09.objectInfos) {
-                    ulong oldSize = 0;
-                    mSizeDic.TryGetValue(obj.classID, out oldSize);
-                    mSizeDic[obj.classID] = oldSize + obj.length;
-                    totalSize += obj.length;
-                    var typeTree = typeTreeDatabase.GetType(9, obj.classID);
-                    if (typeTree != null) {
-                        SerializeObject sobj = new SerializeObject(typeTree, obj.data);
-                        var property = sobj.FindProperty("Base.m_Resource.m_Size");
-                        if (property != null) {
-                            ulong resSize = (ulong)property.Value;
-                            totalSize += resSize;
-                            mSizeDic[obj.classID] += resSize;
-                        }
-                    }
-                }
-            }
-            if (asset is SerializeAssetV15) {
-                var asset15 = asset as SerializeAssetV15;
-                foreach (var obj in asset15.objectInfos) {
-                    ulong oldSize = 0;
-                    mSizeDic.TryGetValue(obj.classID, out oldSize);
-                    mSizeDic[obj.classID] = oldSize + obj.length;
-                    totalSize += obj.length;
-                    var typeTree = typeTreeDatabase.GetType(15, obj.classID);
-                    if (typeTree != null) {
-                        SerializeObject sobj = new SerializeObject(typeTree, obj.data);
-                        var property = sobj.FindProperty("Base.m_Resource.m_Size");
-                        if (property != null) {
-                            ulong resSize = (ulong)property.Value;
-                            totalSize += resSize;
-                            mSizeDic[obj.classID] += resSize;
-                        }
+            foreach (var obj in asset.ObjectInfos) {
+                ulong oldSize = 0;
+                mSizeDic.TryGetValue(obj.classID, out oldSize);
+                mSizeDic[obj.classID] = oldSize + obj.length;
+                totalSize += obj.length;
+                var typeTree = typeTreeDatabase.GetType(asset.AssetVersion, obj.classID);
+                if (typeTree != null) {
+                    SerializeObject sobj = new SerializeObject(typeTree, obj.data);
+                    var property = sobj.FindProperty("Base.m_Resource.m_Size");
+                    if (property != null) {
+                        ulong resSize = (ulong)property.Value;
+                        totalSize += resSize;
+                        mSizeDic[obj.classID] += resSize;
                     }
                 }
             }

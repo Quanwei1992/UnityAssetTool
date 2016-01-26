@@ -78,7 +78,8 @@ namespace UnityAssetTool.Command
             DataReader data = new DataReader(assetms);
             serializeAssets.DeSerialize(data);
             if (serializeAssets != null) {
-                runAssetFile(serializeAssets);
+                var asset = new Asset(serializeAssets);
+                runAssetFile(asset);
             }
             assetms.Dispose();
         }
@@ -100,7 +101,7 @@ namespace UnityAssetTool.Command
             }
         }
 
-        public virtual void runAssetFile(SerializeDataStruct asset)
+        public virtual void runAssetFile(Asset asset)
         {
 
         }

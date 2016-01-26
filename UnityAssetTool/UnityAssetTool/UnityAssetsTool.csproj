@@ -91,11 +91,9 @@
     <Compile Include="Command\TypeTreeDataBase\TypeTreeDataBaseLearnCommand.cs" />
     <Compile Include="Command\TypeTreeDataBase\TypeTreeDataBaseShow.cs" />
     <Compile Include="Command\UnityAssetTools.cs" />
-    <Compile Include="Extractor\AssetsExtractor\AssetsV09Extrator.cs" />
-    <Compile Include="Extractor\AssetsExtractor\AssetsV15Extrator.cs" />
-    <Compile Include="Extractor\AssetsExtractor\DefaultAssetExtrator.cs" />
-    <Compile Include="Extractor\AssetsExtractor\IAssetsExtrator.cs" />
-    <Compile Include="Extractor\AssetsExtractor\AssetsExtrator.cs" />
+    <Compile Include="Extractor\AssetsExtractor\AssetObjectExtrator\AssetObjectRawBitsExtrator.cs" />
+    <Compile Include="Extractor\AssetsExtractor\AssetExtrator.cs" />
+    <Compile Include="Extractor\AssetsExtractor\AssetObjectExtrator\AssetObjectRawTextExtrator.cs" />
     <Compile Include="Extractor\ISerializeObjectExtrator.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -179,6 +177,7 @@
     <Compile Include="ThirdPart\libcmdline\Text\HeadingInfo.cs" />
     <Compile Include="ThirdPart\libcmdline\Text\HelpText.cs" />
     <Compile Include="ThirdPart\libcmdline\Text\_ParsingErrorsHandler.cs" />
+    <Compile Include="Unity\Asset.cs" />
     <Compile Include="Utility\SerializeUtility.cs" />
     <Compile Include="Unity\SerializeObject.cs" />
     <Compile Include="Unity\SerializeProperty.cs" />

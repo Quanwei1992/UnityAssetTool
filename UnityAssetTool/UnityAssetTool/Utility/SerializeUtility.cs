@@ -187,7 +187,7 @@ namespace UnityAssetTool
             return DB;
         }
 
-        static public TypeTree GenerateTypeTreeV9(SerializeAssetV09.SerializeTypeTreeData tree)
+        static private TypeTree GenerateTypeTreeV9(SerializeAssetV09.SerializeTypeTreeData tree)
         {
             TypeTree root = new TypeTree();
             root.name = tree.name;
