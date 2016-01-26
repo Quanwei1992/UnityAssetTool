@@ -15,7 +15,7 @@ namespace UnityAssetTool
             var nameProperty = obj.FindProperty("Base.m_Name");
             string name = "";
             if (nameProperty != null) {
-                name = nameProperty.StringValue;
+                name = nameProperty.Value as string;
             }
             if (string.IsNullOrEmpty(name)) {
                 name = (gID++).ToString();

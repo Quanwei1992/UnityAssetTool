@@ -167,14 +167,14 @@ namespace UnityAssetTool
 
         }
 
-        internal object readDouble()
+        public double readDouble()
         {
-            throw new NotImplementedException();
+            return mStream.ReadDouble();
         }
 
-        internal object readFloat()
+        public float readFloat()
         {
-            throw new NotImplementedException();
+            return mStream.ReadSingle();
         }
 
         public string ReadString()

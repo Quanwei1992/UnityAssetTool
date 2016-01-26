@@ -80,15 +80,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnityEditor_5.2.2p4">
-      <HintPath>UnityAssmemblies\UnityEditor_5.2.2p4.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine_5.2.2p4">
-      <HintPath>UnityAssmemblies\UnityEngine_5.2.2p4.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command\Asset\AssetCommand.cs" />
+    <Compile Include="Command\Asset\AssetSizeInfoCommand.cs" />
     <Compile Include="Command\Asset\AssetUnpackCommand.cs" />
     <Compile Include="Command\Command.cs" />
     <Compile Include="Command\FileCommand.cs" />
@@ -197,7 +192,6 @@
     <None Include="ThirdPart\libcmdline\CommandLine35.v11.suo" />
     <None Include="ThirdPart\libcmdline\Settings.StyleCop" />
     <None Include="ThirdPart\libcmdline\StyleCop.Cache" />
-    <None Include="UnityAssetsTool_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

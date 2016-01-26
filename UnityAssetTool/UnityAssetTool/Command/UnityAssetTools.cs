@@ -19,6 +19,9 @@ namespace UnityAssetTool.Command
         [VerbOption("asset-unpack",HelpText ="extract asset objects.")]
         public AssetUnpackCommand asset_unpack { get; set; }
 
+        [VerbOption("asset-sizeinfo", HelpText = "display assets size info.")]
+        public AssetSizeInfoCommand asset_sizeinfo { get; set; }
+
         public void Run(string[] args)
         {
             Parser.Default.ParseArguments(args, this, (cmdName, cmdIns) => {

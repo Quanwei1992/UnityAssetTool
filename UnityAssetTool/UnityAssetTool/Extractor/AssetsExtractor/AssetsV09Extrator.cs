@@ -18,8 +18,8 @@ namespace UnityAssetTool
         {
             public void Extract(SerializeObject obj, string outputPath)
             {
-                string name = obj.FindProperty("Base.m_Name").StringValue;
-                string script = obj.FindProperty("Base.m_Script").StringValue;
+                string name = obj.FindProperty("Base.m_Name").Value as string;
+                string script = obj.FindProperty("Base.m_Script").Value as string;
                 outputPath = outputPath + "/" + name + ".txt";
                 if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {
                     Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
@@ -36,12 +36,12 @@ namespace UnityAssetTool
         {
             public void Extract(SerializeObject obj, string outputPath)
             {
-                string m_Name = obj.FindProperty("Base.m_Name").StringValue;
-                int m_Width = obj.FindProperty("Base.m_Width").IntValue;
-                int m_Height = obj.FindProperty("Base.m_Height").IntValue;
-                int m_CompleteImageSize = obj.FindProperty("Base.m_CompleteImageSize").IntValue;
-                int m_TextureFormat = obj.FindProperty("Base.m_TextureFormat").IntValue;
-                byte[] data = obj.FindProperty("Base.image data").ByteArrayValue;
+                string m_Name = obj.FindProperty("Base.m_Name").Value as string;
+                int m_Width = (int)obj.FindProperty("Base.m_Width").Value;
+                int m_Height = (int)obj.FindProperty("Base.m_Height").Value;
+                int m_CompleteImageSize = (int)obj.FindProperty("Base.m_CompleteImageSize").Value;
+                int m_TextureFormat = (int)obj.FindProperty("Base.m_TextureFormat").Value;
+                byte[] data =  (byte[])obj.FindProperty("Base.image data").Value;
                 Bitmap bmp = new Bitmap(m_Width, m_Height,PixelFormat.Format32bppArgb);
                 var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
                 int bytes = Math.Abs(bmpData.Stride) * bmp.Height;
@@ -72,15 +72,20 @@ namespace UnityAssetTool
         {
             SerializeAssetV09 asset = assets as SerializeAssetV09;
             foreach (var objinfo in asset.objectInfos) {
+                ExtractRawData(objinfo, outputPath + "/Class" + objinfo.classID + "/");
+                continue;
                 if (typeTreeDB.Contains(9, objinfo.classID)) {
                     try {
                         var typeTree = typeTreeDB.GetType(9, objinfo.classID);
                         if (typeTree != null) {
-                            SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
+                            if (objinfo.classID != 21) continue;
+                            SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);                            
+                            Console.WriteLine(sobj);
                             ISerializeObjectExtrator extrator;
                             if (!mObjectExtratorDic.TryGetValue(typeTree.type, out extrator)) {
                                 extrator = this.GetDefaultSerializeObjectExtrator();
                             }
+                            
                             extrator.Extract(sobj, outputPath + "/" + typeTree.type);
                         }
                     } catch {

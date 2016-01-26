@@ -29,13 +29,13 @@ namespace UnityAssetTool.Command
             if (string.IsNullOrEmpty(OutputDir)) {
                 OutputDir = Directory.GetCurrentDirectory()+"/extractObjects/";
             }
-            try {
+            //try {
                 var assetDB = SerializeUtility.GenerateTypeTreeDataBase(asset);
                 typeTreeDatabase = typeTreeDatabase.Merage(assetDB);
                 extrator.Extract(asset, typeTreeDatabase, OutputDir);
-            } catch {
-                Console.WriteLine("Can't extract asset {0}.",asset.GetType());
-            }
+            //} catch {
+            //    Console.WriteLine("Can't extract asset {0}.",asset.GetType());
+            //}
         }
     }
 }

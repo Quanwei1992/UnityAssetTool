@@ -51,6 +51,19 @@ namespace UnityAssetTool
             return version;
         }
 
+        static public int GetAssetsFileVersion(MemoryStream ms)
+        {
+            long oldPos = ms.Position;
+            BinaryReader br = new BinaryReader(ms);
+            br.ReadBytes(8);
+            var arr = br.ReadBytes(4);
+            Array.Reverse(arr);
+            int version = BitConverter.ToInt32(arr, 0);
+            ms.Position = oldPos;
+            return version;
+        }
+
+
         static public bool IsBundle(string path)
         {
             try {
@@ -87,7 +100,6 @@ namespace UnityAssetTool
         {
 
             TypeTreeDataBase DB = new TypeTreeDataBase();
-
             Dictionary<int, string> typeNameTable = new Dictionary<int, string>();
             //一个共享的类型字符串表
             string defaultTypeStr = Properties.Resources.ResourceManager.GetString("TypeStringTableV15");
@@ -99,6 +111,7 @@ namespace UnityAssetTool
             }
 
             foreach (var baseClass in asset.classes) {
+                if (baseClass.stringTable == null) continue;
                 Dictionary<int, string> onwerStrTable = new Dictionary<int, string>();
                 MemoryStream ms = new MemoryStream(baseClass.stringTable);
                 DataReader data = new DataReader(ms);

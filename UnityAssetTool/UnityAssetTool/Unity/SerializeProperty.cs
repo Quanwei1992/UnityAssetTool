@@ -12,7 +12,7 @@ namespace UnityAssetTool
     {
         Unkonw,
         Base,
-        Stuct,
+        Property,
         Bool,
         SByte,
         Byte,
@@ -37,8 +37,8 @@ namespace UnityAssetTool
         bool mIsArray = false;
         int arrayLength = 0;
         TypeTree mType;
+
         private object value;
-        byte[] mRawdata;
        
         public bool IsArray
         {
@@ -48,7 +48,23 @@ namespace UnityAssetTool
             }
         }
 
-       
+        public int ArrayLength
+        {
+            get
+            {
+                return arrayLength;
+            }
+        }
+
+
+        public object Value
+        {
+            get
+            {
+                return value;
+            }
+        }
+
         public SerializeProperty(TypeTree type)
         {
             mType = type;
@@ -92,213 +108,97 @@ namespace UnityAssetTool
 
         private object readValue(TypeTree typeTree, DataReader data)
         {
-
+            object ret = null;
             switch (typeTree.type) {
                 case "bool":
                 type = SerializePropertyType.Bool;
-                return data.ReadBool();
+                ret = data.ReadBool();
+                break;
                 case "SInt8":
                 type = SerializePropertyType.SByte;
-                return data.ReadSbyte();
+                ret = data.ReadSbyte();
+                break;
                 case "char":
                 case "UInt8":
                 type = SerializePropertyType.Byte;
-                return data.ReadByte();
+                ret = data.ReadByte();
+                break;
                 case "short":
                 case "SInt16":
                 type = SerializePropertyType.Short;
-                return data.ReadInt16();
+                ret = data.ReadInt16();
+                break;
                 case "unsigned short":
                 case "UInt16":
                 type = SerializePropertyType.UShort;
-                return data.ReadUInt16();
+                ret = data.ReadUInt16();
+                break;
                 case "int":
                 case "SInt32":
                 type = SerializePropertyType.Int;
-                return data.ReadInt32();
+                ret = data.ReadInt32();
+                break;
                 case "unsigned int":
                 case "UInt32":
                 type = SerializePropertyType.UInt;
-                return data.ReadUint32();
+                ret = data.ReadUint32();
+                break;
                 case "long":
                 case "SInt64":
                 type = SerializePropertyType.Long;
-                return data.ReadInt64();
+                ret = data.ReadInt64();
+                break;
                 case "unsigned long":
                 case "UInt64":
                 type = SerializePropertyType.ULong;
-                return data.ReadUInt64();
+                ret = data.ReadUInt64();
+                break;
                 case "float":
                 type = SerializePropertyType.Float;
-                return data.readFloat();
+                ret = data.readFloat();
+                break;
                 case "double":
                 type = SerializePropertyType.Double;
-                return data.readDouble();
+                ret = data.readDouble();
+                break;
                 case "string":
                 type = SerializePropertyType.String;
                 int strSize = data.ReadInt32();
-                return UTF8Encoding.Default.GetString(data.ReadBytes(strSize));
+                ret = UTF8Encoding.Default.GetString(data.ReadBytes(strSize));
+                break;
                 case "Array":
                 case "TypelessData":
                 arrayLength = data.ReadInt32();
                 mIsArray = true;
-                
+                var elementType = typeTree.GetChildren()[1];
+                object[] array = new object[arrayLength];
+                for (int i = 0; i < arrayLength; i++) {
+                    array[i] = readValue(elementType, data);
+                }
+                ret = array;
                 break;
                 default:
-                type = SerializePropertyType.Stuct;
-                SerializeObject sobj = new SerializeObject(mType, data);
-                return sobj;
-            }
-        }
-
-        public override void DeSerialize(DataReader data)
-        {
-            if (mType.type == "Base") {
-                var children = mType.GetChildren();
+                type = SerializePropertyType.Property;
+                var children = typeTree.GetChildren();
                 foreach (var child in children) {
                     SerializeProperty property = new SerializeProperty(child);
                     property.DeSerialize(data);
                     AddChild(property);
                 }
-            } else {
-                value = readValue(mType, data);
-                if (((mType.metaFlag & TypeTree.FLAG_FORCE_ALIGN) != 0) || IsArray) {
-                    data.Align(4);
-                }
+                ret = this;
+                break;
             }
 
-
-
-        }
-
-
-        #region GetValue
-
-        public bool BoolValue
-        {
-            get
-            {
-                return BitConverter.ToBoolean(mRawdata, 0);
+            if (((typeTree.metaFlag & TypeTree.FLAG_FORCE_ALIGN) != 0) || IsArray || type == SerializePropertyType.String) {
+                data.Align(4);
             }
-           
+
+            return ret;
         }
 
-        public short ShortValue
+        public override void DeSerialize(DataReader data)
         {
-            get
-            {
-                return BitConverter.ToInt16(mRawdata, 0);
-            }
-            
-        }
-
-        public ushort UShortValue
-        {
-            get
-            {
-                return BitConverter.ToUInt16(mRawdata, 0);
-            }
-            
-        }
-
-        public int IntValue
-        {
-            get
-            {
-                return BitConverter.ToInt32(mRawdata, 0);
-            }
-        }
-
-        public uint UIntValue
-        {
-            get
-            {
-                return BitConverter.ToUInt32(mRawdata, 0);
-            }
-        }
-
-
-        public long LongValue
-        {
-            get
-            { return BitConverter.ToInt64(mRawdata, 0); }
-        }
-
-        public ulong ULongValue
-        {
-            get
-            { return BitConverter.ToUInt64(mRawdata, 0); }
-        }
-
-        public float FloatValue
-        {
-            get
-            { return BitConverter.ToSingle(mRawdata, 0); }
-        }
-
-        public double DoubleValue
-        {
-            get
-            { return BitConverter.ToDouble(mRawdata, 0); }
-        }
-
-        public byte ByteValue
-        {
-            get
-            { return mRawdata[0]; }
-        }
-        public sbyte SByteValue
-        {
-            get
-            { return (sbyte)mRawdata[0]; }
-        }
-
-        public string StringValue
-        {
-            get
-            { return System.Text.UTF8Encoding.Default.GetString(mRawdata); }
-        }
-
-        public byte[] ByteArrayValue
-        {
-            get
-            { return mRawdata; }
-        }
-
-
-        public string GetValueString()
-        {
-            if (mType.type == "string") {
-                return StringValue;
-            }
-            if (mIsArray) {
-                return "Array";
-            }
-            switch (type) {
-                case SerializePropertyType.Bool:
-                return BoolValue.ToString();
-                case SerializePropertyType.Byte:
-                return ByteValue.ToString();
-                case SerializePropertyType.Double:
-                return DoubleValue.ToString();
-                case SerializePropertyType.Float:
-                return FloatValue.ToString();
-                case SerializePropertyType.Int:
-                return IntValue.ToString();
-                case SerializePropertyType.Long:
-                return LongValue.ToString();
-                case SerializePropertyType.SByte:
-                return SByteValue.ToString();
-                case SerializePropertyType.Short:
-                return ShortValue.ToString();
-                case SerializePropertyType.UInt:
-                return UIntValue.ToString();
-                case SerializePropertyType.ULong:
-                return ULongValue.ToString();
-                case SerializePropertyType.UShort:
-                return UShortValue.ToString();
-            }
-            return "";
+             value = readValue(mType, data);
         }
 
         public override string ToString()
@@ -312,10 +212,15 @@ namespace UnityAssetTool
             }
 
             finalStr = mType.type + " " + Name;
-            if (type != SerializePropertyType.Base) {
-                finalStr += ":" + GetValueString() + "\n";
-            } else {
-                finalStr += "\n";
+            if (value == null) {
+                int xxx = 45;
+            }
+            if (value != this) {
+                if (type != SerializePropertyType.Base) {
+                    finalStr += ":" + value.ToString() + "\n";
+                } else {
+                    finalStr += "\n";
+                }
             }
             if (children.Count > 0) {
                 finalStr = finalStr + tabStr + "{\n";
@@ -326,8 +231,5 @@ namespace UnityAssetTool
             }
             return finalStr;
         }
-
-        #endregion
-
     }
 }
