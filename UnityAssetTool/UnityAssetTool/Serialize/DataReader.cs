@@ -44,9 +44,27 @@ namespace UnityAssetTool
             return BitConverter.ToInt32(arr, 0);
         }
 
+        public int[] ReadInt32(int count)
+        {
+            int[] array = new int[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadInt32();
+            }
+            return array;
+        }
+
         public bool ReadBool()
         {
             return mStream.ReadBoolean();
+        }
+
+        public bool[] ReadBool(int count)
+        {
+            bool[] array = new bool[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadBool();
+            }
+            return array;
         }
 
         public uint ReadUint32()
@@ -58,6 +76,15 @@ namespace UnityAssetTool
             return BitConverter.ToUInt32(arr, 0);
         }
 
+        public uint[] ReadUint32(int count)
+        {
+            uint[] array = new uint[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadUint32();
+            }
+            return array;
+        }
+
         public long ReadInt64()
         {
             var arr = mStream.ReadBytes(8);
@@ -67,6 +94,15 @@ namespace UnityAssetTool
             return BitConverter.ToInt64(arr, 0);
         }
 
+        public long[] ReadInt64(int count)
+        {
+            long[] array = new long[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadInt64();
+            }
+            return array;
+        }
+
         public ulong ReadUInt64()
         {
             var arr = mStream.ReadBytes(8);
@@ -74,6 +110,14 @@ namespace UnityAssetTool
                 Array.Reverse(arr);
             }
             return BitConverter.ToUInt64(arr, 0);
+        }
+        public ulong[] ReadUInt64(int count)
+        {
+            ulong[] array = new ulong[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadUInt64();
+            }
+            return array;
         }
 
         public byte ReadByte()
@@ -94,6 +138,14 @@ namespace UnityAssetTool
             }
             return BitConverter.ToInt16(arr, 0);
         }
+        public short[] ReadInt16(int count)
+        {
+            short[] array = new short[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadInt16();
+            }
+            return array;
+        }
 
         public ushort ReadUInt16()
         {
@@ -103,6 +155,15 @@ namespace UnityAssetTool
             }
             return BitConverter.ToUInt16(arr, 0);
 
+        }
+
+        public ushort[] ReadUInt16(int count)
+        {
+            ushort[] array = new ushort[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadUInt16();
+            }
+            return array;
         }
 
         public object ReadSbyte()
@@ -118,6 +179,14 @@ namespace UnityAssetTool
             }
             return BitConverter.ToUInt32(arr, 0);
 
+        }
+        public uint[] ReadUInt32(int count)
+        {
+            uint[] array = new uint[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadUInt32();
+            }
+            return array;
         }
 
         public long position
@@ -167,19 +236,45 @@ namespace UnityAssetTool
 
         }
 
-        public double readDouble()
+        public double ReadDouble()
         {
             return mStream.ReadDouble();
         }
 
-        public float readFloat()
+        public double[] ReadDouble(int count)
+        {
+            double[] array = new double[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadDouble();
+            }
+            return array;
+        }
+
+        public float ReadFloat()
         {
             return mStream.ReadSingle();
         }
 
+        public float[] ReadFloat(int count)
+        {
+            float[] array = new float[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadFloat();
+            }
+            return array;
+        }
         public string ReadString()
         {
             return mStream.ReadString();
+        }
+
+        public string[] ReadString(int count)
+        {
+            string[] array = new string[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadString();
+            }
+            return array;
         }
 
         public char[] ReadChars(int count)
@@ -210,6 +305,15 @@ namespace UnityAssetTool
                 i++;
             }
             return new string(buff, 0, limit);
+        }
+
+        public string[] ReadStringNullArray(int count)
+        {
+            string[] array = new string[count];
+            for (int i = 0; i < count; i++) {
+                array[i] = ReadStringNull();
+            }
+            return array;
         }
 
         public void Close()

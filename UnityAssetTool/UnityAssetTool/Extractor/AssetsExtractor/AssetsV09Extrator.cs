@@ -72,15 +72,11 @@ namespace UnityAssetTool
         {
             SerializeAssetV09 asset = assets as SerializeAssetV09;
             foreach (var objinfo in asset.objectInfos) {
-                ExtractRawData(objinfo, outputPath + "/Class" + objinfo.classID + "/");
-                continue;
                 if (typeTreeDB.Contains(9, objinfo.classID)) {
-                    try {
+                    //try {
                         var typeTree = typeTreeDB.GetType(9, objinfo.classID);
                         if (typeTree != null) {
-                            if (objinfo.classID != 21) continue;
                             SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);                            
-                            Console.WriteLine(sobj);
                             ISerializeObjectExtrator extrator;
                             if (!mObjectExtratorDic.TryGetValue(typeTree.type, out extrator)) {
                                 extrator = this.GetDefaultSerializeObjectExtrator();
@@ -88,9 +84,9 @@ namespace UnityAssetTool
                             
                             extrator.Extract(sobj, outputPath + "/" + typeTree.type);
                         }
-                    } catch {
-                        ExtractRawData(objinfo, outputPath + "/Class" + objinfo.classID + "/");
-                    }
+                    //} catch {
+                    //    ExtractRawData(objinfo, outputPath + "/Class" + objinfo.classID + "/");
+                    //}
 
                 } else {
                     ExtractRawData(objinfo, outputPath + "/Class" + objinfo.classID + "/");

@@ -85,8 +85,6 @@ namespace UnityAssetTool
             SerializeAssetV15 asset = assets as SerializeAssetV15;
           
             foreach (var objinfo in asset.objectInfos) {
-                ExtractRawData(objinfo, outputPath + "/Class" + objinfo.classID + "/");
-                continue;
                 var typeTree = typeTreeDB.GetType(15, objinfo.classID);
                 if (typeTree != null) {
                     SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);

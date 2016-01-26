@@ -25,11 +25,11 @@ namespace UnityAssetTool.Command
         {
             foreach (var path in assetFiles) {
                 Console.WriteLine("Handel Asset:" + path);
-                try {
+               // try {
                     DeserializeAsset(path);
-                } catch {
-                    Console.WriteLine("Can't open asset file {0}.", path);
-                }
+               // } catch {
+               //     Console.WriteLine("Can't open asset file {0}.", path);
+               // }
             }
         }
 
@@ -103,12 +103,6 @@ namespace UnityAssetTool.Command
         public virtual void runAssetFile(SerializeDataStruct asset)
         {
 
-        }
-
-        [HelpOption]
-        public string GetUsage()
-        {
-            return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
         }
     }
 }

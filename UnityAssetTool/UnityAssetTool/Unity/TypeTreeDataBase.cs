@@ -15,7 +15,10 @@ namespace UnityAssetTool
 
         public TypeTree GetType(int version, int classID)
         {
-            return mTypeDic[version][classID];
+            if (Contains(version, classID)) {
+                return mTypeDic[version][classID];
+            }
+            return null;      
         }
 
         public bool Contains(int version, int classID)

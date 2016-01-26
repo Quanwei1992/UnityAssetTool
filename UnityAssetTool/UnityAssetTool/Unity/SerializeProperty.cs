@@ -11,7 +11,6 @@ namespace UnityAssetTool
     public enum SerializePropertyType
     {
         Unkonw,
-        Base,
         Property,
         Bool,
         SByte,
@@ -24,7 +23,8 @@ namespace UnityAssetTool
         ULong,
         Float,
         Double,
-        String
+        String,
+        Array
     }
 
 
@@ -33,21 +33,13 @@ namespace UnityAssetTool
         public SerializeProperty parent;
         public List<SerializeProperty> children = new List<SerializeProperty>();
 
-        public SerializePropertyType type;
-        bool mIsArray = false;
+        public SerializePropertyType propertyType;
+        public SerializePropertyType arrayElementType;
         int arrayLength = 0;
         TypeTree mType;
 
         private object value;
        
-        public bool IsArray
-        {
-            get
-            {
-                return mIsArray;
-            }
-        }
-
         public int ArrayLength
         {
             get
@@ -106,121 +98,208 @@ namespace UnityAssetTool
 
 
 
-        private object readValue(TypeTree typeTree, DataReader data)
+        private static SerializePropertyType typeStr2PropertyType(string typeStr)
         {
-            object ret = null;
-            switch (typeTree.type) {
+            switch (typeStr) {
                 case "bool":
-                type = SerializePropertyType.Bool;
-                ret = data.ReadBool();
-                break;
+                return SerializePropertyType.Bool;
                 case "SInt8":
-                type = SerializePropertyType.SByte;
-                ret = data.ReadSbyte();
-                break;
+                return SerializePropertyType.SByte;
                 case "char":
                 case "UInt8":
-                type = SerializePropertyType.Byte;
-                ret = data.ReadByte();
-                break;
+                return SerializePropertyType.Byte;
                 case "short":
                 case "SInt16":
-                type = SerializePropertyType.Short;
-                ret = data.ReadInt16();
-                break;
+                return SerializePropertyType.Short;
                 case "unsigned short":
                 case "UInt16":
-                type = SerializePropertyType.UShort;
-                ret = data.ReadUInt16();
-                break;
+                return SerializePropertyType.UShort;
                 case "int":
                 case "SInt32":
-                type = SerializePropertyType.Int;
-                ret = data.ReadInt32();
-                break;
+                return SerializePropertyType.Int;
                 case "unsigned int":
                 case "UInt32":
-                type = SerializePropertyType.UInt;
-                ret = data.ReadUint32();
-                break;
+                return SerializePropertyType.UInt;
                 case "long":
                 case "SInt64":
-                type = SerializePropertyType.Long;
-                ret = data.ReadInt64();
-                break;
+                return SerializePropertyType.Long;
                 case "unsigned long":
                 case "UInt64":
-                type = SerializePropertyType.ULong;
+                return SerializePropertyType.ULong;
+                case "float":
+                return SerializePropertyType.Float;
+                case "double":
+                return SerializePropertyType.Double;           
+                case "string":
+                return SerializePropertyType.String;
+                case "Array":
+                case "TypelessData":
+                return SerializePropertyType.Array;
+                default:
+                return SerializePropertyType.Property;
+            }
+        }
+
+        private object readValue(SerializePropertyType ptype,TypeTree typeTree, DataReader data)
+        {
+            
+            object ret = null;
+            switch (ptype) {
+                case SerializePropertyType.Bool:
+                ret = data.ReadBool();
+                break;
+                case SerializePropertyType.SByte:
+                ret = data.ReadSbyte();
+                break;
+                case SerializePropertyType.Byte:
+                ret = data.ReadByte();
+                break;
+                case SerializePropertyType.Short:
+                ret = data.ReadInt16();
+                break;
+                case SerializePropertyType.UShort:
+                ret = data.ReadUInt16();
+                break;
+                case SerializePropertyType.Int:
+                ret = data.ReadInt32();
+                break;
+                case SerializePropertyType.UInt:
+                ret = data.ReadUint32();
+                break;
+                case SerializePropertyType.Long:
+                ret = data.ReadInt64();
+                break;
+                case SerializePropertyType.ULong:
                 ret = data.ReadUInt64();
                 break;
-                case "float":
-                type = SerializePropertyType.Float;
-                ret = data.readFloat();
+                case SerializePropertyType.Float:
+                ret = data.ReadFloat();
                 break;
-                case "double":
-                type = SerializePropertyType.Double;
-                ret = data.readDouble();
+                case SerializePropertyType.Double:
+                ret = data.ReadDouble();
                 break;
-                case "string":
-                type = SerializePropertyType.String;
+                case SerializePropertyType.String:
                 int strSize = data.ReadInt32();
                 ret = UTF8Encoding.Default.GetString(data.ReadBytes(strSize));
                 break;
-                case "Array":
-                case "TypelessData":
-                arrayLength = data.ReadInt32();
-                mIsArray = true;
-                var elementType = typeTree.GetChildren()[1];
-                object[] array = new object[arrayLength];
-                for (int i = 0; i < arrayLength; i++) {
-                    array[i] = readValue(elementType, data);
-                }
-                ret = array;
-                break;
                 default:
-                type = SerializePropertyType.Property;
-                var children = typeTree.GetChildren();
-                foreach (var child in children) {
-                    SerializeProperty property = new SerializeProperty(child);
-                    property.DeSerialize(data);
-                    AddChild(property);
-                }
-                ret = this;
                 break;
             }
 
-            if (((typeTree.metaFlag & TypeTree.FLAG_FORCE_ALIGN) != 0) || IsArray || type == SerializePropertyType.String) {
+            if (((typeTree.metaFlag & TypeTree.FLAG_FORCE_ALIGN) != 0)  || propertyType == SerializePropertyType.String) {
                 data.Align(4);
             }
 
             return ret;
         }
 
+
+        public object readArrayValue(TypeTree typeTree, DataReader data)
+        {            
+            var elementType = typeTree.GetChildren()[1];
+            arrayLength = data.ReadInt32();
+            arrayElementType = typeStr2PropertyType(elementType.type);
+            object ret = null;
+            switch (arrayElementType) {
+                case SerializePropertyType.Bool:
+                ret = data.ReadBool(arrayLength);
+                break;
+                case SerializePropertyType.Byte:
+                ret = data.ReadBytes(arrayLength);
+                break;
+                case SerializePropertyType.Double:
+                ret = data.ReadDouble(arrayLength);
+                break;
+                case SerializePropertyType.Float:
+                ret = data.ReadFloat(arrayLength);
+                break;
+                case SerializePropertyType.Int:
+                ret = data.ReadInt32(arrayLength);
+                break;
+                case SerializePropertyType.Long:
+                ret = data.ReadInt64(arrayLength);
+                break;
+                case SerializePropertyType.SByte:
+                ret = data.ReadSbytes(arrayLength);
+                break;
+                case SerializePropertyType.Short:
+                ret = data.ReadInt16(arrayLength);
+                break;
+                case SerializePropertyType.String:
+                ret = data.ReadStringNullArray(arrayLength);
+                break;
+                case SerializePropertyType.UInt:
+                ret = data.ReadUint32(arrayLength);
+                break;
+                case SerializePropertyType.ULong:
+                ret = data.ReadUInt64(arrayLength);
+                break;
+                case SerializePropertyType.UShort:
+                ret = data.ReadUInt16(arrayLength);
+                break;
+                default:
+                object[] properArray = new object[arrayLength];
+                for (int i = 0; i < arrayLength; i++) {
+                    object value = null;
+                    if (arrayElementType == SerializePropertyType.Property || arrayElementType == SerializePropertyType.Array) {
+                        var sp = new SerializeProperty(elementType);
+                        sp.DeSerialize(data);
+                        value = sp;
+                    }
+                    properArray[i] = value;
+                }
+                ret = properArray;
+                break;
+            }
+
+            data.Align(4);
+            return ret;
+        }
+
         public override void DeSerialize(DataReader data)
         {
-             value = readValue(mType, data);
+            propertyType = typeStr2PropertyType(mType.type);
+            if (propertyType == SerializePropertyType.Property) {
+                var children = mType.GetChildren();
+                foreach (var child in children) {
+                    SerializeProperty childProperty = new SerializeProperty(child);
+                    childProperty.DeSerialize(data);
+                    this.AddChild(childProperty);
+                }
+            } else if (propertyType == SerializePropertyType.Array) {
+                value = readArrayValue(mType,data);
+            } else {
+                value = readValue(propertyType,mType, data);
+            }
+
         }
 
         public override string ToString()
         {
             string finalStr = "";
             string tabStr = "";
-            var it = parent;
+            var it = mType.parent;
             while (it != null) {
                 tabStr += "   ";
                 it = it.parent;
             }
 
             finalStr = mType.type + " " + Name;
-            if (value == null) {
-                int xxx = 45;
-            }
-            if (value != this) {
-                if (type != SerializePropertyType.Base) {
-                    finalStr += ":" + value.ToString() + "\n";
+            if (propertyType != SerializePropertyType.Property) {
+                if (propertyType == SerializePropertyType.Array) {
+                    var array = value as Array;
+                    finalStr +=" Size:"+array.Length+ "\n" + tabStr + "[\n";
+                    int index = 0;
+                    foreach (var obj in array) {
+                        finalStr += tabStr +"    ["+index++ +"]"+obj.ToString() +tabStr+"    "+ ",\n";
+                    }                   
+                    finalStr += tabStr + "]\n";
                 } else {
-                    finalStr += "\n";
+                    finalStr += ":" + value.ToString() + "\n";
                 }
+                
+            } else {
+                finalStr += "\n";
             }
             if (children.Count > 0) {
                 finalStr = finalStr + tabStr + "{\n";
