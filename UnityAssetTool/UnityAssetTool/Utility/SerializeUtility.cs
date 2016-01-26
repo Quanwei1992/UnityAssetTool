@@ -222,5 +222,34 @@ namespace UnityAssetTool
             fs.Flush();
             fs.Dispose();
         }
+
+        private static Dictionary<int,string> mClassNameMap = null;
+        public static string ClassIDToClassName(int classID)
+        {
+            if (mClassNameMap == null) {
+                initClassNameMap();
+            }
+            string ret = classID.ToString();
+            if (mClassNameMap.ContainsKey(classID)) {
+                ret = mClassNameMap[classID];
+            }
+            return ret;
+        }
+
+        private static void initClassNameMap()
+        {
+            mClassNameMap = new Dictionary<int, string>();
+            string[] lines = Properties.Resources.ClassNameMap.Split('\n');
+            foreach (var line in lines) {
+                var kvr = line.Split(' ');
+                if (kvr.Length == 2) {
+                    int id;
+                    if (int.TryParse(kvr[0], out id)) {
+                        mClassNameMap[id] = kvr[1].Remove(kvr[1].Length-1);
+                    }
+                }
+            }
+        }
+
     }
 }

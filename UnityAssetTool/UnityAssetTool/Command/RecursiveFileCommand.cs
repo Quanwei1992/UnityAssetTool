@@ -60,5 +60,11 @@ namespace UnityAssetTool.Command
         {
 
         }
+
+        [HelpOption]
+        public string GetUsage()
+        {
+            return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
+        }
     }
 }

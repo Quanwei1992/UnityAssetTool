@@ -21,7 +21,11 @@ namespace UnityAssetTool.Command
                 runFile(filePath);
             }
         }
-
+        [HelpOption]
+        public string GetUsage()
+        {
+            return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
+        }
         public virtual void runFile(string path) { }
     }
 }

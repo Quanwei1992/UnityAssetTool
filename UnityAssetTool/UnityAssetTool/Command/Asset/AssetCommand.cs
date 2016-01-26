@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-
+using CommandLine;
+using CommandLine.Parsing;
+using CommandLine.Text;
 namespace UnityAssetTool.Command
 {
     public class AssetCommand : RecursiveFileCommand
@@ -101,6 +103,12 @@ namespace UnityAssetTool.Command
         public virtual void runAssetFile(SerializeDataStruct asset)
         {
 
+        }
+
+        [HelpOption]
+        public string GetUsage()
+        {
+            return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
         }
     }
 }

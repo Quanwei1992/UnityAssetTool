@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using CommandLine;
+using CommandLine.Parsing;
+using CommandLine.Text;
 namespace UnityAssetTool.Command
 {
     public class AssetSizeInfoCommand : AssetCommand
@@ -18,7 +20,8 @@ namespace UnityAssetTool.Command
             Console.WriteLine("TotalSize:{0} kb", totalSize/1024.0f);
             var sortedDic = mSizeDic.OrderByDescending(x => x.Value).ToDictionary(x=>x.Key,x=>x.Value);
             foreach (var kvp in sortedDic) {
-                Console.WriteLine("ClassID:{0} Size:{1} kb  {2}%", kvp.Key, kvp.Value/1024.0f,kvp.Value/(float)totalSize);
+                string className = SerializeUtility.ClassIDToClassName(kvp.Key);
+                Console.WriteLine("{0,-30} Size:{1,-15}kb {2,-15}%",className,kvp.Value/1024.0f,(kvp.Value/(float)totalSize)*100);
             }
         }
         public override void runAssetFile(SerializeDataStruct asset)
@@ -41,6 +44,14 @@ namespace UnityAssetTool.Command
                     totalSize += obj.length;
                 }
             }
+        }
+
+
+
+        [HelpOption]
+        public string GetUsage()
+        {
+            return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
         }
     }
 }

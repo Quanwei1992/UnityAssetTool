@@ -61,6 +61,46 @@ namespace UnityAssetTool.Properties {
         }
         
         /// <summary>
+        ///   查找类似 1 GameObject
+        ///2 Component
+        ///3 LevelGameManager
+        ///4 Transform
+        ///5 TimeManager
+        ///6 GlobalGameManager
+        ///8 Behaviour
+        ///9 GameManager
+        ///11 AudioManager
+        ///12 ParticleAnimator
+        ///13 InputManager
+        ///15 EllipsoidParticleEmitter
+        ///17 Pipeline
+        ///18 EditorExtension
+        ///19 Physics2DSettings
+        ///20 Camera
+        ///21 Material
+        ///23 MeshRenderer
+        ///25 Renderer
+        ///26 ParticleRenderer
+        ///27 Texture
+        ///28 Texture2D
+        ///29 SceneSettings
+        ///30 GraphicsSettings
+        ///33 MeshFilter
+        ///41 OcclusionPortal
+        ///43 Mesh
+        ///45 Skybox
+        ///47 QualitySettings
+        ///48 Shader
+        ///49 TextAsset
+        ///50 Rigidb [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        /// </summary>
+        public static string ClassNameMap {
+            get {
+                return ResourceManager.GetString("ClassNameMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 AABB
         ///AnimationClip
         ///AnimationCurve
