@@ -180,7 +180,8 @@ namespace UnityAssetTool
                 break;
                 case SerializePropertyType.String:
                 int strSize = data.ReadInt32();
-                ret = UTF8Encoding.Default.GetString(data.ReadBytes(strSize));
+                ret = UnicodeEncoding.UTF8.GetString(data.ReadBytes(strSize));
+                //ret = UTF8Encoding.Default.GetString();
                 break;
                 default:
                 break;
@@ -288,11 +289,16 @@ namespace UnityAssetTool
             if (propertyType != SerializePropertyType.Property) {
                 if (propertyType == SerializePropertyType.Array) {
                     var array = value as Array;
-                    finalStr +=" Size:"+array.Length+ "\n" + tabStr + "[\n";
+                    finalStr += " Size:" + array.Length + "\n" + tabStr + "[\n";
                     int index = 0;
-                    foreach (var obj in array) {
-                        finalStr += tabStr +"    ["+index++ +"]"+obj.ToString() +tabStr+"    "+ ",\n";
-                    }                   
+                    if (value is byte[]) {
+                        finalStr += tabStr + "    ByteArray\n";
+                    } else {
+                        foreach (var obj in array) {
+                            finalStr += tabStr + "    [" + index++ + "]" + obj.ToString() + tabStr + "    " + ",\n";
+                        }
+                    }
+                  
                     finalStr += tabStr + "]\n";
                 } else {
                     finalStr += ":" + value.ToString() + "\n";

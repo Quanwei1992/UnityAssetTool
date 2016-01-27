@@ -20,7 +20,7 @@ namespace UnityAssetTool.Command
         public override void run()
         {
             
-            TypeTreeDataBase typeTreeDatabase = SerializeUtility.LoadTypeTreeDataBase(Resources.TypeTreeDataBasePath);
+            TypeTreeDataBase typeTreeDatabase = AssetToolUtility.LoadTypeTreeDataBase(Resources.TypeTreeDataBasePath);
             var allVertions = typeTreeDatabase.GetAllVersion();
             if (version != -1) {
                 if (classID != -1) {

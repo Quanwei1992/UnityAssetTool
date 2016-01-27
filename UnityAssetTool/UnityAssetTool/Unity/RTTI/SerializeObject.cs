@@ -29,7 +29,7 @@ namespace UnityAssetTool
 
         public SerializeProperty FindProperty(string fullName)
         {
-            return rootProperty.FindChild(fullName);
+            return rootProperty.FindChild("Base."+fullName);
         }
 
         public override string ToString()

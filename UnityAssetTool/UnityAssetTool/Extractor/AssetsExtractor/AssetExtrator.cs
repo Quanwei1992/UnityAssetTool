@@ -6,58 +6,13 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
+using UnityAssetTool.Extractor;
 namespace UnityAssetTool
 {
     public class AssetExtrator
     {
-        private class TextAssetExtrator : ISerializeObjectExtrator
-        {
-            public void Extract(SerializeObject obj, string outputPath)
-            {
-                string name = obj.FindProperty("Base.m_Name").Value as string;
-                string script = obj.FindProperty("Base.m_Script").Value as string;
-                outputPath = outputPath + "/" + name + ".txt";
-                if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {
-                    Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
-                }
-                var bytes = System.Text.Encoding.Unicode.GetBytes(script);
-                var fs = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write);
-                fs.Write(bytes, 0, bytes.Length);
-                fs.Flush();
-                fs.Dispose();
-            }
-        }
-
-        private class Texture2DExtrator : ISerializeObjectExtrator
-        {
-            public void Extract(SerializeObject obj, string outputPath)
-            {
-                string m_Name = obj.FindProperty("Base.m_Name").Value as string;
-                int m_Width = (int)obj.FindProperty("Base.m_Width").Value;
-                int m_Height = (int)obj.FindProperty("Base.m_Height").Value;
-                int m_CompleteImageSize = (int)obj.FindProperty("Base.m_CompleteImageSize").Value;
-                int m_TextureFormat = (int)obj.FindProperty("Base.m_TextureFormat").Value;
-                byte[] data =  (byte[])obj.FindProperty("Base.image data").Value;
-                Bitmap bmp = new Bitmap(m_Width, m_Height,PixelFormat.Format32bppArgb);
-                var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-                int bytes = Math.Abs(bmpData.Stride) * bmp.Height;
-                IntPtr ptr = bmpData.Scan0;
-                System.Runtime.InteropServices.Marshal.Copy(data, 0, ptr, bytes);
-
-
-                bmp.UnlockBits(bmpData);
-                outputPath = outputPath + "/" + m_Name + ".bmp";
-                if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {
-                    Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
-                }
-                bmp.Save(outputPath);
-            }
-        }
-
-
         private Dictionary<string, ISerializeObjectExtrator> mObjectExtratorDic = new Dictionary<string, ISerializeObjectExtrator>();
-        private AssetObjectRawBitsExtrator rawBitsExtrator = new AssetObjectRawBitsExtrator();
-        private AssetObjectRawTextExtrator rawTextExtrator = new AssetObjectRawTextExtrator();
+
         public enum ExtractMode
         {
             Auto,
@@ -68,11 +23,76 @@ namespace UnityAssetTool
         public AssetExtrator()
         {
             mObjectExtratorDic["TextAsset"] = new TextAssetExtrator();
-            mObjectExtratorDic["Texture2D"] = new Texture2DExtrator();
+            //mObjectExtratorDic["Texture2D"] = new Texture2DExtrator();
+        }
+
+
+        private void extractAuto(Asset.AssetObjectInfo objinfo,TypeTree typeTree, string outputPath)
+        {
+            if (typeTree != null) {
+                SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
+                ISerializeObjectExtrator extrator;
+                if (mObjectExtratorDic.TryGetValue(typeTree.type, out extrator)) {
+                    extrator.Extract(sobj, outputPath + "/" + typeTree.type);
+                } else {
+                    extractOnlyRawText(objinfo, typeTree, outputPath);
+                }
+            } else {
+                extractOnlyRawBits(objinfo, typeTree, outputPath);
+            }
+        }
+        private void extractOnlyRawBits(Asset.AssetObjectInfo objinfo, TypeTree typeTree, string outputPath)
+        {
+            string name = "";
+            if (typeTree != null) {
+                SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
+                var nameProperty = sobj.FindProperty("m_Name");
+                if (nameProperty != null) {
+                    name = nameProperty.Value as string;
+                }
+            }
+            ExtractRawBits(objinfo, outputPath, name);
+        }
+
+        private void extractOnlyRawText(Asset.AssetObjectInfo objinfo, TypeTree typeTree, string outputPath)
+        {
+            if (typeTree != null) {
+                SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
+                ExtractRawText(sobj,outputPath);
+            }
+        }
+
+        private void extractRawTextOrRawBits(Asset.AssetObjectInfo objinfo, TypeTree typeTree, string outputPath)
+        {
+            if (typeTree != null) {
+                extractOnlyRawText(objinfo, typeTree, outputPath);
+            } else {
+                extractOnlyRawBits(objinfo,typeTree,outputPath);
+            }
+                
         }
 
         public void Extract(Asset asset, TypeTreeDataBase typeTreeDB, string outputPath, ExtractMode mode = ExtractMode.Auto)
         {
+            foreach (var objinfo in asset.ObjectInfos) {
+                string className = AssetToolUtility.ClassIDToClassName(objinfo.classID);
+                var path = outputPath + "/Class " +objinfo.classID+" "+ className+"/";
+                var typeTree = typeTreeDB.GetType(asset.AssetVersion, objinfo.classID);
+                switch (mode) {
+                    case ExtractMode.Auto:
+                    extractAuto(objinfo, typeTree, path);
+                    break;
+                    case ExtractMode.OnlyRawBits:
+                    extractOnlyRawBits(objinfo, typeTree, path);
+                    break;
+                    case ExtractMode.OnlyRawText:
+                    extractOnlyRawText(objinfo, typeTree, path);
+                    break;
+                    case ExtractMode.RawTextOrRawBits:
+                    extractRawTextOrRawBits(objinfo, typeTree, path);
+                    break;
+                }
+            }
             if (mode == ExtractMode.Auto) {
                 foreach (var objinfo in asset.ObjectInfos) {
                     if (typeTreeDB.Contains(asset.AssetVersion, objinfo.classID)) {
@@ -88,16 +108,27 @@ namespace UnityAssetTool
 
                         }
                     } else {
-                        string className = SerializeUtility.ClassIDToClassName(objinfo.classID);
-                        ExtractRawBits(objinfo, outputPath + "/Class" + className + "/");
+                        string className = AssetToolUtility.ClassIDToClassName(objinfo.classID);
+                        ExtractRawBits(objinfo, outputPath + "/Class"+ objinfo.classID+" " + className + "/");
                     }
                 }
             }
 
             if (mode == ExtractMode.OnlyRawBits) {
                 foreach (var objinfo in asset.ObjectInfos) {
-                    string className = SerializeUtility.ClassIDToClassName(objinfo.classID);
-                    ExtractRawBits(objinfo, outputPath + "/Class" + className + "/");
+                    string className = AssetToolUtility.ClassIDToClassName(objinfo.classID);
+                    string name = null;
+                    if (typeTreeDB.Contains(asset.AssetVersion, objinfo.classID)) {
+                        var typeTree = typeTreeDB.GetType(asset.AssetVersion, objinfo.classID);
+                        if (typeTree != null) {
+                            SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
+                            var nameProperty = sobj.FindProperty("m_Name");
+                            if (nameProperty != null) {
+                                name = nameProperty.Value as string;
+                            }
+                        }
+                    }
+                    ExtractRawBits(objinfo, outputPath + "/Class" + objinfo.classID + " " + className + "/",name);
                 }
             }
 
@@ -122,24 +153,27 @@ namespace UnityAssetTool
                             ExtractRawText(sobj, outputPath + "/" + typeTree.type);                            
                         }
                     } else {
-                        string className = SerializeUtility.ClassIDToClassName(objinfo.classID);
-                        ExtractRawBits(objinfo, outputPath + "/Class" + className + "/");
+                        string className = AssetToolUtility.ClassIDToClassName(objinfo.classID);
+                        ExtractRawBits(objinfo, outputPath + "/Class" + objinfo.classID + " " + className + "/");
                     }
                 }
             }
 
-
-
         }
 
         int gID = 0;
-        private void ExtractRawBits(Asset.AssetObjectInfo obj,string outputPath)
+        private void ExtractRawBits(Asset.AssetObjectInfo obj, string outputPath, string name = null)
         {
-            string name = (gID++)+"_"+ obj.PathID.ToString()+".raw";
-            outputPath = outputPath + "/" + name;
+            if (string.IsNullOrEmpty(name)) {
+                name = (gID++) + "_" + obj.PathID.ToString();
+            }
+
+
+            outputPath = outputPath + "/" + name + ".raw";
+            outputPath = AssetToolUtility.FixOuputPath(outputPath);
             if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
-            }
+            }       
             var bytes = obj.data;
             var fs = new FileStream(outputPath, FileMode.OpenOrCreate, FileAccess.Write);
             fs.Write(bytes, 0, bytes.Length);
@@ -147,9 +181,12 @@ namespace UnityAssetTool
             fs.Dispose();
         }
 
+
+
+
         public void ExtractRawText(SerializeObject obj, string outputPath)
         {
-            var nameProperty = obj.FindProperty("Base.m_Name");
+            var nameProperty = obj.FindProperty("m_Name");
             string name = "";
             if (nameProperty != null) {
                 name = nameProperty.Value as string;
@@ -158,6 +195,7 @@ namespace UnityAssetTool
                 name = (gID++).ToString();
             }
             outputPath += "/" + name + ".txt";
+            outputPath = AssetToolUtility.FixOuputPath(outputPath);
             string content = obj.ToString();
             if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath));

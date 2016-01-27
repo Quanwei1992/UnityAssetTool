@@ -68,7 +68,7 @@ namespace UnityAssetTool.Command
                 assetfs.Dispose();
             }
             assetms.Position = 0;
-            int version = SerializeUtility.GetAssetsFileVersion(assetms);
+            int version = AssetToolUtility.GetAssetsFileVersion(assetms);
             var serializeAssets = SerializeAssetFactory.CreateWithVersion(version);
             if (serializeAssets == null) {
                 assetms.Dispose();

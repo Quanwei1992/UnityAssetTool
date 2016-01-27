@@ -15,14 +15,17 @@ namespace UnityAssetTool.Command
     {
         [Option('o',"output",HelpText="Output Directory.",Required = false,DefaultValue = null)]
         public string OutputDir { get; set; }
+        [Option('m',"mode",HelpText ="Extract Mode 0:Auto,1:OnlyRawBits,2:OnlyRawText,3:RawBitsOrRawText",Required =false,DefaultValue = 0)]
+        public int mode { get; set; }
+
         TypeTreeDataBase typeTreeDatabase;
         AssetExtrator extrator;
         public override void run()
         {
             extrator = new AssetExtrator();
-            typeTreeDatabase = SerializeUtility.LoadTypeTreeDataBase(Resources.TypeTreeDataBasePath);
+            typeTreeDatabase = AssetToolUtility.LoadTypeTreeDataBase(Resources.TypeTreeDataBasePath);
             base.run();
-            SerializeUtility.SaveTypeTreeDataBase(Resources.TypeTreeDataBasePath, typeTreeDatabase);
+            AssetToolUtility.SaveTypeTreeDataBase(Resources.TypeTreeDataBasePath, typeTreeDatabase);
         }
         public override void runAssetFile(Asset asset)
         {
@@ -31,8 +34,16 @@ namespace UnityAssetTool.Command
             }
             //try {
                 var assetDB = asset.TypeTreeDatabase;
-                typeTreeDatabase = typeTreeDatabase.Merage(assetDB);
-                extrator.Extract(asset, typeTreeDatabase, OutputDir);
+            typeTreeDatabase = typeTreeDatabase.Merage(assetDB);
+            var extractMode = AssetExtrator.ExtractMode.Auto;
+            if (mode == 1) {
+                extractMode = AssetExtrator.ExtractMode.OnlyRawBits;
+            } else if (mode == 2) {
+                extractMode = AssetExtrator.ExtractMode.OnlyRawText;
+            } else if (mode == 3) {
+                extractMode = AssetExtrator.ExtractMode.RawTextOrRawBits;
+            }
+            extrator.Extract(asset, typeTreeDatabase, OutputDir,extractMode);
             //} catch {
             //    Console.WriteLine("Can't extract asset {0}.",asset.GetType());
             //}

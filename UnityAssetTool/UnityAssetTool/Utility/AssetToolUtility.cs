@@ -7,7 +7,7 @@ using System.IO;
 
 namespace UnityAssetTool
 {
-    class SerializeUtility
+    public class AssetToolUtility
     {
         static public int GetAssetsFileVersion(string path)
         {
@@ -93,6 +93,24 @@ namespace UnityAssetTool
             }
             return null;
         }
+
+
+        public static string FixOuputPath(string path)
+        {
+            string fname = Path.GetFileName(path);
+            var invalidFileNameChars = Path.GetInvalidFileNameChars();
+            foreach (var c in invalidFileNameChars) {
+                fname = fname.Replace(c, ' ');
+            }
+            string finalPath = Path.GetDirectoryName(path) + "/" + fname;
+            long index = 0;
+            while (File.Exists(finalPath)) {
+                finalPath = Path.GetDirectoryName(path) + "/" + Path.GetFileNameWithoutExtension(fname) + "(" + ++index + ")" + Path.GetExtension(fname);
+            }
+
+            return finalPath;
+        }
+
 
         #region Generate TypeTree V15
 

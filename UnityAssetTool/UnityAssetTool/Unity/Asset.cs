@@ -19,7 +19,7 @@ namespace UnityAssetTool
 
         public Asset(SerializeDataStruct serializeAsset)
         {
-            TypeTreeDatabase = SerializeUtility.GenerateTypeTreeDataBase(serializeAsset);
+            TypeTreeDatabase = AssetToolUtility.GenerateTypeTreeDataBase(serializeAsset);
             if (serializeAsset is SerializeAssetV15) {
                 Init(serializeAsset as SerializeAssetV15);
             } else if (serializeAsset is SerializeAssetV09) {
@@ -40,6 +40,7 @@ namespace UnityAssetTool
                 ObjectInfos[i].classID = serializeAsset.objectInfos[i].classID;
                 ObjectInfos[i].typeID = serializeAsset.objectInfos[i].typeID;
                 ObjectInfos[i].isDestroyed = serializeAsset.objectInfos[i].isDestroyed == 1;
+                ObjectInfos[i].length = serializeAsset.objectInfos[i].length;
                 ObjectInfos[i].data = serializeAsset.objectInfos[i].data;
             }
 
@@ -56,6 +57,7 @@ namespace UnityAssetTool
                 ObjectInfos[i].classID = serializeAsset.objectInfos[i].classID;
                 ObjectInfos[i].typeID = serializeAsset.objectInfos[i].typeID;
                 ObjectInfos[i].isDestroyed = serializeAsset.objectInfos[i].isDestroyed == 1;
+                ObjectInfos[i].length = serializeAsset.objectInfos[i].length;
                 ObjectInfos[i].data = serializeAsset.objectInfos[i].data;
             }
         }

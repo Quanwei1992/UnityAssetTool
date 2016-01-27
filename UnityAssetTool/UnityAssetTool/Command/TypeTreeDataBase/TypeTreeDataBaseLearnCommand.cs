@@ -15,13 +15,13 @@ namespace UnityAssetTool.Command
         TypeTreeDataBase typeTreeDatabase;
         public override void run()
         {
-            typeTreeDatabase = SerializeUtility.LoadTypeTreeDataBase(Resources.TypeTreeDataBasePath);
-            base.run();
-            SerializeUtility.SaveTypeTreeDataBase(Resources.TypeTreeDataBasePath, typeTreeDatabase);
+            typeTreeDatabase = AssetToolUtility.LoadTypeTreeDataBase(Resources.TypeTreeDataBasePath);
+            run();
+            AssetToolUtility.SaveTypeTreeDataBase(Resources.TypeTreeDataBasePath, typeTreeDatabase);
         }
         public override void runFileRecursive(string path)
         {
-            if (SerializeUtility.IsBundle(path)) {
+            if (AssetToolUtility.IsBundle(path)) {
                 try {
                     learnFormAssetBundle(path);
                 } catch {
@@ -44,12 +44,12 @@ namespace UnityAssetTool.Command
             SerializeBundle bundle = new SerializeBundle();
             bundle.DeSerialize(br);
             foreach (var bundleEntry in bundle.entrys) {
-                int version = SerializeUtility.GetAssetsFileVersion(bundleEntry.assetData);
+                int version = AssetToolUtility.GetAssetsFileVersion(bundleEntry.assetData);
                 var serializeAssets = SerializeAssetFactory.CreateWithVersion(version);
                 MemoryStream ms = new MemoryStream(bundleEntry.assetData);
                 DataReader dr = new DataReader(ms);
                 serializeAssets.DeSerialize(dr);
-                var assetTypeTreeDB = SerializeUtility.GenerateTypeTreeDataBase(serializeAssets);
+                var assetTypeTreeDB = AssetToolUtility.GenerateTypeTreeDataBase(serializeAssets);
                 if (assetTypeTreeDB != null) {
                     var allType = assetTypeTreeDB.GetAllType(version);
                     foreach (var type in allType) {
@@ -66,10 +66,10 @@ namespace UnityAssetTool.Command
         {
             FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             DataReader dr = new DataReader(fs);
-            int version = SerializeUtility.GetAssetsFileVersion(path);
+            int version = AssetToolUtility.GetAssetsFileVersion(path);
             var serializeAssets = SerializeAssetFactory.CreateWithVersion(version);
             serializeAssets.DeSerialize(dr);
-            var assetTypeTreeDB = SerializeUtility.GenerateTypeTreeDataBase(serializeAssets);
+            var assetTypeTreeDB = AssetToolUtility.GenerateTypeTreeDataBase(serializeAssets);
             typeTreeDatabase = assetTypeTreeDB.Merage(typeTreeDatabase);
             dr.Close();
             fs.Dispose();

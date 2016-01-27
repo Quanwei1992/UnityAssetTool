@@ -19,13 +19,13 @@ namespace UnityAssetTool.Command
         public override void run()
         {
             mSizeDic.Clear();
-            typeTreeDatabase = SerializeUtility.LoadTypeTreeDataBase(Resources.TypeTreeDataBasePath);
+            typeTreeDatabase = AssetToolUtility.LoadTypeTreeDataBase(Resources.TypeTreeDataBasePath);
             base.run();
-            SerializeUtility.SaveTypeTreeDataBase(Resources.TypeTreeDataBasePath, typeTreeDatabase);
+            AssetToolUtility.SaveTypeTreeDataBase(Resources.TypeTreeDataBasePath, typeTreeDatabase);
             Console.WriteLine("TotalSize:{0} kb", totalSize / 1024.0f);
             var sortedDic = mSizeDic.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
             foreach (var kvp in sortedDic) {
-                string className = SerializeUtility.ClassIDToClassName(kvp.Key);
+                string className = AssetToolUtility.ClassIDToClassName(kvp.Key);
                 Console.WriteLine("{0,-30} Size:{1,-15}kb {2,-15}%", className, kvp.Value / 1024.0f, (kvp.Value / (float)totalSize) * 100);
             }
         }
@@ -39,7 +39,7 @@ namespace UnityAssetTool.Command
                 var typeTree = typeTreeDatabase.GetType(asset.AssetVersion, obj.classID);
                 if (typeTree != null) {
                     SerializeObject sobj = new SerializeObject(typeTree, obj.data);
-                    var property = sobj.FindProperty("Base.m_Resource.m_Size");
+                    var property = sobj.FindProperty("m_Resource.m_Size");
                     if (property != null) {
                         ulong resSize = (ulong)property.Value;
                         totalSize += resSize;
