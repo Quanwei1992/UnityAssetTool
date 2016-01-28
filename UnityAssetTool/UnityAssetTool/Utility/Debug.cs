@@ -8,6 +8,10 @@ namespace UnityAssetTool
 {
     public static class Debug
     {
+        public static void log(object obj)
+        {
+            Console.WriteLine(obj);
+        }
         public static void Log(string format,params object[] arg)
         {
             LogColored(ConsoleColor.White, format, arg);

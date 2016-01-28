@@ -10,11 +10,11 @@ namespace UnityAssetTool.Unity
     {
         string m_Script;
         string m_PathName;
-        public override void Deserialize(SerializeObject obj)
+        public override void Deserialize(SerializeProperty rootProperty)
         {
-            base.Deserialize(obj);
-            m_Script = (string)obj.FindProperty("m_Script").Value;
-            m_PathName = (string)obj.FindProperty("m_PathName").Value;
+            base.Deserialize(rootProperty);
+            m_Script = (string)rootProperty.FindChild("m_Script").Value;
+            m_PathName = (string)rootProperty.FindChild("m_PathName").Value;
         }
     }
 }

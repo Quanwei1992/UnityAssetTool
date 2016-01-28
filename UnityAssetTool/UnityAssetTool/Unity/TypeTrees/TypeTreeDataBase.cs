@@ -12,6 +12,7 @@ namespace UnityAssetTool
     {
         //version,classid,type
         Dictionary<int, Dictionary<int, TypeTree>> mTypeDic = new Dictionary<int, Dictionary<int, TypeTree>>();
+        
 
         public TypeTreeDataBase()
         {
@@ -94,6 +95,7 @@ namespace UnityAssetTool
 
         public void Serialize(Stream stream)
         {
+            regiserDefaultTypetyess();
             BinaryWriter bw = new BinaryWriter(stream);
             int curIndex = 0;
             Dictionary<TypeTree, int> typeIndexDic = new Dictionary<TypeTree, int>();
@@ -173,6 +175,8 @@ namespace UnityAssetTool
                     parent.AddChild(trees[i]);
                 }
             }
+
+            regiserDefaultTypetyess();
         }
     }
 }

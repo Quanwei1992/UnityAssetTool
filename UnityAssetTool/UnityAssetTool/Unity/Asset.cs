@@ -15,7 +15,7 @@ namespace UnityAssetTool
 
         public AssetObjectInfo[] ObjectInfos { get; private set; }
 
-
+        public FileIdentifier[] ExternalFiles { get; private set; }
 
         public Asset(SerializeDataStruct serializeAsset)
         {
@@ -43,7 +43,11 @@ namespace UnityAssetTool
                 ObjectInfos[i].data = serializeAsset.objectInfos[i].data;
             }
 
-            
+            ExternalFiles = new FileIdentifier[serializeAsset.numOfFileIdentifiers];
+            for (int i = 0; i < serializeAsset.numOfFileIdentifiers; i++) {
+                ExternalFiles[i] = new FileIdentifier();
+                ExternalFiles[i].filePath = serializeAsset.fileIdentifiers[i].filePath;
+            }
         }
         public void Init(SerializeAssetV09 serializeAsset)
         {
@@ -59,7 +63,18 @@ namespace UnityAssetTool
                 ObjectInfos[i].length = serializeAsset.objectInfos[i].length;
                 ObjectInfos[i].data = serializeAsset.objectInfos[i].data;
             }
+            ExternalFiles = new FileIdentifier[serializeAsset.numOfFileIdentifiers];
+            for (int i = 0; i < serializeAsset.numOfFileIdentifiers; i++) {
+                ExternalFiles[i] = new FileIdentifier();
+                ExternalFiles[i].filePath = serializeAsset.fileIdentifiers[i].filePath;
+            }
         }
+
+        public class FileIdentifier
+        {
+            public string filePath;
+        }
+
         public class AssetObjectInfo
         {
             public ulong PathID;

@@ -274,5 +274,13 @@ namespace UnityAssetTool
             }
         }
 
+        public static MemoryStream ZipInputStream2MemoryStream(Stream zipStream,long size)
+        {
+            //var stream = zipStream as ICSharpCode.SharpZipLib.Zip.Compression.Streams.InflaterInputStream;
+            byte[] buffer = new byte[size];
+            zipStream.Read(buffer, 0, (int)size);
+            return new MemoryStream(buffer);
+        }
+
     }
 }

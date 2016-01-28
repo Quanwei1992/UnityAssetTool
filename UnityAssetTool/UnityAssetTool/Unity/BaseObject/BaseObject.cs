@@ -8,6 +8,6 @@ namespace UnityAssetTool.Unity
 {
     public abstract class BaseObject : ISerialize
     {
-        public abstract void Deserialize(SerializeObject obj);
+        public abstract void Deserialize(SerializeProperty rootProperty);
     }
 }

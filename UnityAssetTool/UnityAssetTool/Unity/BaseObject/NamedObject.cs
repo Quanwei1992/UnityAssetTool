@@ -21,9 +21,9 @@ namespace UnityAssetTool.Unity
             }
         }
 
-        public override void Deserialize(SerializeObject obj)
+        public override void Deserialize(SerializeProperty rootProperty)
         {
-            m_Name = (string)obj.FindProperty("m_Name").Value;
+            m_Name = (string)rootProperty.FindChild("m_Name").Value;
         }
     }
 }

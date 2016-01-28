@@ -9,28 +9,29 @@ namespace UnityAssetTool
 {
     public class SerializeObject
     {
-        private SerializeProperty rootProperty;
+        public SerializeProperty RootProperty { get; private set; }
+
 
         public SerializeObject(TypeTree type, byte[] rawData)
         {
-            rootProperty = new SerializeProperty(type);
+            RootProperty = new SerializeProperty(type);
             MemoryStream ms = new MemoryStream(rawData);
             DataReader br = new DataReader(ms);
-            rootProperty.DeSerialize(br);
+            RootProperty.DeSerialize(br);
             br.Close();
             ms.Close();
         }
 
         public SerializeObject(TypeTree type, DataReader data)
         {
-            rootProperty = new SerializeProperty(type);
-            rootProperty.DeSerialize(data);
+            RootProperty = new SerializeProperty(type);
+            RootProperty.DeSerialize(data);
         }
 
         public SerializeProperty FindProperty(string fullName)
         {
-            if (rootProperty != null) {
-                return rootProperty.FindChild("Base." + fullName);
+            if (RootProperty != null) {
+                return RootProperty.FindChild("Base." + fullName);
             }
             return null;
            
@@ -38,7 +39,7 @@ namespace UnityAssetTool
 
         public override string ToString()
         {
-            return rootProperty.ToString();
+            return RootProperty.ToString();
         }
     }
 }

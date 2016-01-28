@@ -30,7 +30,7 @@ namespace UnityAssetTool.Unity
         int m_ColorSpace;
         byte[] image_data;
 
-        public override void Deserialize(SerializeObject obj)
+        public override void Deserialize(SerializeProperty rootProperty)
         {
             
         }

@@ -86,12 +86,25 @@ namespace UnityAssetTool
         }
 
 
-        public SerializeProperty FindChild(string fullName)
+        public SerializeProperty FindChild(string name)
         {
-            if (this.FullName == fullName) return this;
-            for (int i = 0; i < children.Count; i++) {
-                var child = children[i].FindChild(fullName);
-                if (child != null) return child;
+            string[] names = name.Split('.');
+            if (names.Length > 0) {
+                string childName = names[0];
+                string subName = "";
+                if (names.Length > 1) {
+                    subName = name.Remove(0, names[0].Length + 1);
+                }
+                
+                foreach (var child in children) {
+                    if (child.Name == childName) {
+                        if (string.IsNullOrEmpty(subName)) {
+                            return child;
+                        } else {
+                            return child.FindChild(subName);
+                        }
+                    }
+                }
             }
             return null;
         }
@@ -239,9 +252,9 @@ namespace UnityAssetTool
                 ret = data.ReadUInt16(arrayLength);
                 break;
                 default:
-                object[] properArray = new object[arrayLength];
+                SerializeProperty[] properArray = new SerializeProperty[arrayLength];
                 for (int i = 0; i < arrayLength; i++) {
-                    object value = null;
+                    SerializeProperty value = null;
                     if (arrayElementType == SerializePropertyType.Property || arrayElementType == SerializePropertyType.Array) {
                         var sp = new SerializeProperty(elementType);
                         sp.DeSerialize(data);
