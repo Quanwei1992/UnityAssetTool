@@ -8,8 +8,20 @@ namespace UnityAssetTool.Unity
 {
     public class NamedObject : BaseObject
     {
-        public string m_Name;
-        public NamedObject(SerializeObject obj) : base(obj)
+        string m_Name;
+        public string name
+        {
+            get
+            {
+                return m_Name;
+            }
+            set
+            {
+                m_Name = value;
+            }
+        }
+
+        public override void Deserialize(SerializeObject obj)
         {
             m_Name = (string)obj.FindProperty("m_Name").Value;
         }

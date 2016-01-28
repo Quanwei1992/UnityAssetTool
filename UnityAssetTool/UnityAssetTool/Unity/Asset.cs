@@ -39,7 +39,6 @@ namespace UnityAssetTool
                 ObjectInfos[i].PathID = (ulong)serializeAsset.objectInfos[i].PathID;
                 ObjectInfos[i].classID = serializeAsset.objectInfos[i].classID;
                 ObjectInfos[i].typeID = serializeAsset.objectInfos[i].typeID;
-                ObjectInfos[i].isDestroyed = serializeAsset.objectInfos[i].isDestroyed == 1;
                 ObjectInfos[i].length = serializeAsset.objectInfos[i].length;
                 ObjectInfos[i].data = serializeAsset.objectInfos[i].data;
             }

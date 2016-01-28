@@ -38,13 +38,19 @@ namespace UnityAssetTool.Command
                 totalSize += obj.length;
                 var typeTree = typeTreeDatabase.GetType(asset.AssetVersion, obj.classID);
                 if (typeTree != null) {
-                    SerializeObject sobj = new SerializeObject(typeTree, obj.data);
-                    var property = sobj.FindProperty("m_Resource.m_Size");
-                    if (property != null) {
-                        ulong resSize = (ulong)property.Value;
-                        totalSize += resSize;
-                        mSizeDic[obj.classID] += resSize;
+                    try {
+                        SerializeObject sobj = new SerializeObject(typeTree, obj.data);
+                        var property = sobj.FindProperty("m_Resource.m_Size");
+                        if (property != null) {
+                            ulong resSize = (ulong)property.Value;
+                            totalSize += resSize;
+                            mSizeDic[obj.classID] += resSize;
+                        }
+                    } catch {
+                        Debug.LogError("Can't Create SerializeObject.TypeVerion:{0},TypeClassID:{1},TypeName:{2}",
+                       typeTree.version, obj.classID, typeTree.type);
                     }
+
                 }
             }
         }

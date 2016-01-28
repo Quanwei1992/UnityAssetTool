@@ -44,11 +44,16 @@ namespace UnityAssetTool
         private void extractOnlyRawBits(Asset.AssetObjectInfo objinfo, TypeTree typeTree, string outputPath)
         {
             string name = "";
-            if (typeTree != null) {
-                SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
-                var nameProperty = sobj.FindProperty("m_Name");
-                if (nameProperty != null) {
-                    name = nameProperty.Value as string;
+            if (typeTree != null) {           
+                try {
+                    SerializeObject sobj  = new SerializeObject(typeTree, objinfo.data);
+                    var nameProperty = sobj.FindProperty("m_Name");
+                    if (nameProperty != null) {
+                        name = nameProperty.Value as string;
+                    }
+                } catch {
+                    Debug.LogError("Can't Create SerializeObject.TypeVerion:{0},TypeClassID:{1},TypeName:{2}",
+                        typeTree.version, objinfo.classID, typeTree.type);
                 }
             }
             ExtractRawBits(objinfo, outputPath, name);
@@ -92,73 +97,7 @@ namespace UnityAssetTool
                     extractRawTextOrRawBits(objinfo, typeTree, path);
                     break;
                 }
-            }
-            if (mode == ExtractMode.Auto) {
-                foreach (var objinfo in asset.ObjectInfos) {
-                    if (typeTreeDB.Contains(asset.AssetVersion, objinfo.classID)) {
-                        var typeTree = typeTreeDB.GetType(asset.AssetVersion, objinfo.classID);
-                        if (typeTree != null) {
-                            SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
-                            ISerializeObjectExtrator extrator;
-                            if (mObjectExtratorDic.TryGetValue(typeTree.type, out extrator)) {
-                                extrator.Extract(sobj, outputPath + "/" + typeTree.type);
-                            } else {
-                                ExtractRawText(sobj, outputPath + "/" + typeTree.type);
-                            }
-
-                        }
-                    } else {
-                        string className = AssetToolUtility.ClassIDToClassName(objinfo.classID);
-                        ExtractRawBits(objinfo, outputPath + "/Class"+ objinfo.classID+" " + className + "/");
-                    }
-                }
-            }
-
-            if (mode == ExtractMode.OnlyRawBits) {
-                foreach (var objinfo in asset.ObjectInfos) {
-                    string className = AssetToolUtility.ClassIDToClassName(objinfo.classID);
-                    string name = null;
-                    if (typeTreeDB.Contains(asset.AssetVersion, objinfo.classID)) {
-                        var typeTree = typeTreeDB.GetType(asset.AssetVersion, objinfo.classID);
-                        if (typeTree != null) {
-                            SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
-                            var nameProperty = sobj.FindProperty("m_Name");
-                            if (nameProperty != null) {
-                                name = nameProperty.Value as string;
-                            }
-                        }
-                    }
-                    ExtractRawBits(objinfo, outputPath + "/Class" + objinfo.classID + " " + className + "/",name);
-                }
-            }
-
-            if (mode == ExtractMode.OnlyRawText) {
-                foreach (var objinfo in asset.ObjectInfos) {
-                    if (typeTreeDB.Contains(asset.AssetVersion, objinfo.classID)) {
-                        var typeTree = typeTreeDB.GetType(asset.AssetVersion, objinfo.classID);
-                        if (typeTree != null) {
-                            SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
-                            ExtractRawText(sobj, outputPath + "/" + typeTree.type);
-                        }
-                    }
-                }
-            }
-
-            if (mode == ExtractMode.RawTextOrRawBits) {
-                foreach (var objinfo in asset.ObjectInfos) {
-                    if (typeTreeDB.Contains(asset.AssetVersion, objinfo.classID)) {
-                        var typeTree = typeTreeDB.GetType(asset.AssetVersion, objinfo.classID);
-                        if (typeTree != null) {
-                            SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
-                            ExtractRawText(sobj, outputPath + "/" + typeTree.type);                            
-                        }
-                    } else {
-                        string className = AssetToolUtility.ClassIDToClassName(objinfo.classID);
-                        ExtractRawBits(objinfo, outputPath + "/Class" + objinfo.classID + " " + className + "/");
-                    }
-                }
-            }
-
+            }     
         }
 
         int gID = 0;
@@ -167,8 +106,6 @@ namespace UnityAssetTool
             if (string.IsNullOrEmpty(name)) {
                 name = (gID++) + "_" + obj.PathID.ToString();
             }
-
-
             outputPath = outputPath + "/" + name + ".raw";
             outputPath = AssetToolUtility.FixOuputPath(outputPath);
             if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {

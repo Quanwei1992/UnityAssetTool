@@ -4,6 +4,8 @@ using CommandLine;
 using CommandLine.Parsing;
 using CommandLine.Text;
 using UnityAssetTool.Command;
+using System.IO.Compression;
+using ICSharpCode.SharpZipLib.Zip;
 namespace UnityAssetTool
 {
     class Program
@@ -11,6 +13,11 @@ namespace UnityAssetTool
 
         static void Main(string[] args)
         {
+            //string path = "D:\\assettool\\test.apk";
+
+            //SerializeAPK apk = new SerializeAPK();
+            //apk.DeSerialize(path);
+
             UnityAssetTools tools = new UnityAssetTools();
             tools.Run(args);
             Console.Write("Please enter any key to contiue..");

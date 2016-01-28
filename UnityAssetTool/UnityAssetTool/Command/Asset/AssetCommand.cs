@@ -23,10 +23,18 @@ namespace UnityAssetTool.Command
 
         private void handelAssetFilePaths()
         {
+            int i = 0;
+            int n = assetFiles.Count;
+            int curPos = 2;
             foreach (var path in assetFiles) {
-                Console.WriteLine("Handel Asset:" + path);
-               // try {
-                    DeserializeAsset(path);
+                Console.SetCursorPosition(0, 0);
+                Debug.Log("Process:({0}/{1})   {2}",++i,n,((float)i/(float)n).ToString("P"));
+                Console.SetCursorPosition(0, 1);
+                Debug.Log("handel asset:{0,-256}",path);
+                Console.SetCursorPosition(0, curPos);
+                // try {
+                DeserializeAsset(path);
+                curPos = Console.CursorTop;
                // } catch {
                //     Console.WriteLine("Can't open asset file {0}.", path);
                // }
@@ -72,7 +80,7 @@ namespace UnityAssetTool.Command
             var serializeAssets = SerializeAssetFactory.CreateWithVersion(version);
             if (serializeAssets == null) {
                 assetms.Dispose();
-                Console.WriteLine("Can't deserialize asset file {0}.Version:{1}", path, version);
+                Debug.LogError("Can't deserialize asset file {0}.Version:{1}", path, version);
                 return;
             }
             DataReader data = new DataReader(assetms);

@@ -14,12 +14,8 @@ namespace UnityAssetTool
             var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             if (fs == null || !fs.CanRead) return -1;
             BinaryReader br = new BinaryReader(fs);
-            br.ReadBytes(8);
-            var arr = br.ReadBytes(4);
-            Array.Reverse(arr);
-            int version = BitConverter.ToInt32(arr, 0);
-            br.Close();
-            fs.Close();
+            int version = GetAssetsFileVersion(br);
+            fs.Dispose();
             return version;
         }
         /// <summary>
@@ -41,25 +37,32 @@ namespace UnityAssetTool
         static public int GetAssetsFileVersion(byte[] fileBuff)
         {
             MemoryStream ms = new MemoryStream(fileBuff);
-            BinaryReader br = new BinaryReader(ms);
-            br.ReadBytes(8);
-            var arr = br.ReadBytes(4);
-            Array.Reverse(arr);
-            int version = BitConverter.ToInt32(arr, 0);
-            br.Close();
+            int version = GetAssetsFileVersion(ms);
             ms.Close();
             return version;
         }
 
-        static public int GetAssetsFileVersion(MemoryStream ms)
+        static public int GetAssetsFileVersion(BinaryReader br)
         {
-            long oldPos = ms.Position;
-            BinaryReader br = new BinaryReader(ms);
+            long oldPos = br.BaseStream.Position;
             br.ReadBytes(8);
             var arr = br.ReadBytes(4);
             Array.Reverse(arr);
             int version = BitConverter.ToInt32(arr, 0);
-            ms.Position = oldPos;
+            br.BaseStream.Position = oldPos;
+            return version;
+        }
+
+        static public int GetAssetsFileVersion(Stream stream)
+        {
+            BinaryReader br = new BinaryReader(stream);
+            return GetAssetsFileVersion(br);
+        }
+
+        static public int GetAssetsFileVersion(MemoryStream ms)
+        {
+            BinaryReader br = new BinaryReader(ms);
+            int version = GetAssetsFileVersion(br);
             return version;
         }
 
@@ -97,6 +100,8 @@ namespace UnityAssetTool
 
         public static string FixOuputPath(string path)
         {
+            path = path.Replace("\r","");
+            path = path.Replace("\n", "");
             string fname = Path.GetFileName(path);
             var invalidFileNameChars = Path.GetInvalidFileNameChars();
             foreach (var c in invalidFileNameChars) {

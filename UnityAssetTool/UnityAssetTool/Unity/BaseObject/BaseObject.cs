@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace UnityAssetTool.Unity
 {
-    public class BaseObject
+    public abstract class BaseObject : ISerialize
     {
-        protected SerializeObject mSerializeObj;
-        public BaseObject(SerializeObject obj)
-        {
-            mSerializeObj = obj;
-        }
+        public abstract void Deserialize(SerializeObject obj);
     }
 }

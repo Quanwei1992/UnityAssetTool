@@ -8,10 +8,13 @@ namespace UnityAssetTool.Unity
 {
     public class TextAsset : NamedObject
     {
-
-        public TextAsset(SerializeObject obj) : base(obj)
+        string m_Script;
+        string m_PathName;
+        public override void Deserialize(SerializeObject obj)
         {
-
+            base.Deserialize(obj);
+            m_Script = (string)obj.FindProperty("m_Script").Value;
+            m_PathName = (string)obj.FindProperty("m_PathName").Value;
         }
     }
 }

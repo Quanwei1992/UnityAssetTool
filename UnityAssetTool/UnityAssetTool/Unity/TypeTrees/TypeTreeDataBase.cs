@@ -7,11 +7,23 @@ using System.Xml.Serialization;
 using System.IO;
 namespace UnityAssetTool
 {
-
+    using Unity.TypeTrees;
     public class TypeTreeDataBase
     {
         //version,classid,type
         Dictionary<int, Dictionary<int, TypeTree>> mTypeDic = new Dictionary<int, Dictionary<int, TypeTree>>();
+
+        public TypeTreeDataBase()
+        {
+            regiserDefaultTypetyess();
+        }
+
+
+        private void regiserDefaultTypetyess()
+        {
+            Put(15, 147, new ResourceManagerTypeTreeV15());
+            Put(9, 147, new ResourceManagerTypeTreeV09());
+        }
 
         public TypeTree GetType(int version, int classID)
         {
@@ -75,6 +87,7 @@ namespace UnityAssetTool
                     ret.Put(version, classID, type);
                 }
             }
+            ret.regiserDefaultTypetyess();
             return ret;
         }
 
