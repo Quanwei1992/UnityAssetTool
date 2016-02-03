@@ -16,17 +16,17 @@ namespace UnityAssetTool.Command
         public override void run()
         {
             typeTreeDatabase = AssetToolUtility.LoadTypeTreeDataBase(Resources.TypeTreeDataBasePath);
-            run();
+            base.run();
             AssetToolUtility.SaveTypeTreeDataBase(Resources.TypeTreeDataBasePath, typeTreeDatabase);
         }
         public override void runFileRecursive(string path)
         {
             if (AssetToolUtility.IsBundle(path)) {
-                try {
+                //try {
                     learnFormAssetBundle(path);
-                } catch {
-                    Console.WriteLine("Can't open asset bundle " + path);
-                }
+                //} catch {
+                 //   Console.WriteLine("Can't open asset bundle " + path);
+                //}
             } else {
                 try {
                     learnFormAssetFile(path);
@@ -46,18 +46,21 @@ namespace UnityAssetTool.Command
             foreach (var bundleEntry in bundle.entrys) {
                 int version = AssetToolUtility.GetAssetsFileVersion(bundleEntry.assetData);
                 var serializeAssets = SerializeAssetFactory.CreateWithVersion(version);
-                MemoryStream ms = new MemoryStream(bundleEntry.assetData);
-                DataReader dr = new DataReader(ms);
-                serializeAssets.DeSerialize(dr);
-                var assetTypeTreeDB = AssetToolUtility.GenerateTypeTreeDataBase(serializeAssets);
-                if (assetTypeTreeDB != null) {
-                    var allType = assetTypeTreeDB.GetAllType(version);
-                    foreach (var type in allType) {
-                        Console.WriteLine("AddType:Version:{0},ClassID{1},Name:{2}", version, type.Key, type.Value.type);
+                if (serializeAssets != null) {
+                    MemoryStream ms = new MemoryStream(bundleEntry.assetData);
+                    DataReader dr = new DataReader(ms);
+                    serializeAssets.DeSerialize(dr);
+                    var assetTypeTreeDB = AssetToolUtility.GenerateTypeTreeDataBase(serializeAssets);
+                    if (assetTypeTreeDB != null) {
+                        var allType = assetTypeTreeDB.GetAllType(version);
+                        foreach (var type in allType) {
+                            Console.WriteLine("AddType:Version:{0},ClassID{1},Name:{2}", version, type.Key, type.Value.type);
+                        }
                     }
+                    typeTreeDatabase = assetTypeTreeDB.Merage(typeTreeDatabase);
+                } else {
+                    Debug.LogError("can't deserialize bundle entry " + bundleEntry.name);
                 }
-                typeTreeDatabase = assetTypeTreeDB.Merage(typeTreeDatabase);
-                dr.Close();
                 fs.Dispose();
             }
         }

@@ -27,13 +27,13 @@ namespace UnityAssetTool
         }
 
 
-        private void extractAuto(Asset.AssetObjectInfo objinfo,TypeTree typeTree, string outputPath)
+        private void ExtractAuto(Asset.AssetObjectInfo objinfo,TypeTree typeTree, string outputPath)
         {
             if (typeTree != null) {
                 SerializeObject sobj = new SerializeObject(typeTree, objinfo.data);
                 ISerializeObjectExtrator extrator;
                 if (mObjectExtratorDic.TryGetValue(typeTree.type, out extrator)) {
-                    extrator.Extract(sobj, outputPath + "/" + typeTree.type);
+                    extrator.Extract(sobj, outputPath);
                 } else {
                     extractOnlyRawText(objinfo, typeTree, outputPath);
                 }
@@ -44,19 +44,20 @@ namespace UnityAssetTool
         private void extractOnlyRawBits(Asset.AssetObjectInfo objinfo, TypeTree typeTree, string outputPath)
         {
             string name = "";
-            if (typeTree != null) {           
+            if (typeTree != null && Path.GetFileName(outputPath) == "") {           
                 try {
                     SerializeObject sobj  = new SerializeObject(typeTree, objinfo.data);
-                    var nameProperty = sobj.FindProperty("m_Name");
+                   var nameProperty = sobj.FindProperty("m_Name");              
                     if (nameProperty != null) {
                         name = nameProperty.Value as string;
+                        outputPath += "/" + name;
                     }
                 } catch {
                     Debug.LogError("Can't Create SerializeObject.TypeVerion:{0},TypeClassID:{1},TypeName:{2}",
                         typeTree.version, objinfo.classID, typeTree.type);
                 }
             }
-            ExtractRawBits(objinfo, outputPath, name);
+            ExtractRawBits(objinfo, outputPath);
         }
 
         private void extractOnlyRawText(Asset.AssetObjectInfo objinfo, TypeTree typeTree, string outputPath)
@@ -74,7 +75,27 @@ namespace UnityAssetTool
             } else {
                 extractOnlyRawBits(objinfo,typeTree,outputPath);
             }
-                
+
+        }
+
+
+
+        public void ExtractObjct(Asset.AssetObjectInfo obj, TypeTree typeTree, string outputPath, ExtractMode mode = ExtractMode.Auto)
+        {
+            switch (mode) {
+                case ExtractMode.Auto:
+                ExtractAuto(obj, typeTree, outputPath);
+                break;
+                case ExtractMode.OnlyRawBits:
+                extractOnlyRawBits(obj, typeTree, outputPath);
+                break;
+                case ExtractMode.OnlyRawText:
+                extractOnlyRawText(obj, typeTree, outputPath);
+                break;
+                case ExtractMode.RawTextOrRawBits:
+                extractRawTextOrRawBits(obj, typeTree, outputPath);
+                break;
+            }
         }
 
         public void Extract(Asset asset, TypeTreeDataBase typeTreeDB, string outputPath, ExtractMode mode = ExtractMode.Auto)
@@ -83,30 +104,24 @@ namespace UnityAssetTool
                 string className = AssetToolUtility.ClassIDToClassName(objinfo.classID);
                 var path = outputPath + "/Class " +objinfo.classID+" "+ className+"/";
                 var typeTree = typeTreeDB.GetType(asset.AssetVersion, objinfo.classID);
-                switch (mode) {
-                    case ExtractMode.Auto:
-                    extractAuto(objinfo, typeTree, path);
-                    break;
-                    case ExtractMode.OnlyRawBits:
-                    extractOnlyRawBits(objinfo, typeTree, path);
-                    break;
-                    case ExtractMode.OnlyRawText:
-                    extractOnlyRawText(objinfo, typeTree, path);
-                    break;
-                    case ExtractMode.RawTextOrRawBits:
-                    extractRawTextOrRawBits(objinfo, typeTree, path);
-                    break;
-                }
+                ExtractObjct(objinfo, typeTree, outputPath, mode);
             }     
         }
 
         int gID = 0;
-        private void ExtractRawBits(Asset.AssetObjectInfo obj, string outputPath, string name = null)
+        private void ExtractRawBits(Asset.AssetObjectInfo obj, string outputPath)
         {
-            if (string.IsNullOrEmpty(name)) {
-                name = (gID++) + "_" + obj.PathID.ToString();
+
+            if (Path.GetFileName(outputPath) == "") {
+                string name = (gID++) + "_" + obj.PathID.ToString();
+                outputPath = outputPath + "/" + name;
             }
-            outputPath = outputPath + "/" + name + ".raw";
+            if (Path.GetExtension(outputPath) == "") {
+                outputPath += ".raw";
+            }
+          
+
+
             outputPath = AssetToolUtility.FixOuputPath(outputPath);
             if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath));
@@ -123,15 +138,21 @@ namespace UnityAssetTool
 
         public void ExtractRawText(SerializeObject obj, string outputPath)
         {
-            var nameProperty = obj.FindProperty("m_Name");
-            string name = "";
-            if (nameProperty != null) {
-                name = nameProperty.Value as string;
+
+            if (Path.GetFileName(outputPath) == "") {
+                var nameProperty = obj.FindProperty("m_Name");
+                string name = "";
+                if (nameProperty != null) {
+                    name = nameProperty.Value as string;
+                }
+                if (string.IsNullOrEmpty(name)) {
+                    name = (gID++).ToString();
+                }
+                outputPath += "/" + name;
             }
-            if (string.IsNullOrEmpty(name)) {
-                name = (gID++).ToString();
-            }
-            outputPath += "/" + name + ".txt";
+            if (Path.GetExtension(outputPath) == "") {
+                outputPath += ".txt";
+            }     
             outputPath = AssetToolUtility.FixOuputPath(outputPath);
             string content = obj.ToString();
             if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {

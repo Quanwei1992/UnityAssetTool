@@ -13,16 +13,16 @@ namespace UnityAssetTool
     {
         public List<Asset> AssetList = new List<Asset>();
         public ResourceManager ResMgr = new ResourceManager();
+        public int Version;
 
-
-        public void DeSerialize(string packgePath)
+        public bool DeSerialize(string packgePath)
         {
             ZipFile zipFile = null;
             try {
                 zipFile = new ZipFile(packgePath);
             } catch {
                 Debug.LogError("Cant't uncomress file "+packgePath);
-                return;
+                return false;
             }
 
             //load mainData
@@ -34,12 +34,13 @@ namespace UnityAssetTool
             var zipStream = zipFile.GetInputStream(mainDataEntry);
             var mainDataStream = AssetToolUtility.ZipInputStream2MemoryStream(zipStream,mainDataEntry.Size);
             zipStream.Close();
-            int version = AssetToolUtility.GetAssetsFileVersion(mainDataStream);
-            Debug.Log("MainDataVersion:" + version);
-            var serializeAsset = SerializeAssetFactory.CreateWithVersion(version);
+            Version = AssetToolUtility.GetAssetsFileVersion(mainDataStream);    
+            Debug.Log("MainDataVersion:" + Version);
+            var serializeAsset = SerializeAssetFactory.CreateWithVersion(Version);
             if (serializeAsset == null) {
-                Debug.LogError("Cant't uncomress file {0},Version:",packgePath,version);
-                return;
+                Debug.LogError("Cant't uncomress file {0},Version:",packgePath, Version);
+                zipFile.Close();
+                return false;
             }
             DataReader dr = new DataReader(mainDataStream);
             serializeAsset.DeSerialize(dr);
@@ -78,7 +79,7 @@ namespace UnityAssetTool
                     }
                     externStream.Position = 0;
                     DataReader externDataReader = new DataReader(externStream);
-                    var externSerializeFile = SerializeAssetFactory.CreateWithVersion(version);
+                    var externSerializeFile = SerializeAssetFactory.CreateWithVersion(Version);
                     externSerializeFile.DeSerialize(externDataReader);
                     externStream.Dispose();        
                     Asset externAsset = new Asset(externSerializeFile);
@@ -86,6 +87,9 @@ namespace UnityAssetTool
                     Debug.Log("Added:" +path);
                 } catch {
                     Debug.LogError("Cant't deserialize asset {0},Version:", path);
+                    zipFile.Close();
+                    return false;
+                    
                 }
             }
 
@@ -95,20 +99,26 @@ namespace UnityAssetTool
             SerializeObject resourMgrObj = null;
             foreach (var obj in mainDataAsset.ObjectInfos) {
                 if (obj.classID == 147) {
-                    var resmgrType = typetreedb.GetType(version, 147);
+                    var resmgrType = typetreedb.GetType(Version, 147);
                     if (resmgrType != null) {
                         resourMgrObj = new SerializeObject(resmgrType, obj.data);
                         ResMgr.Deserialize(resourMgrObj.RootProperty);
                     } else {
                         Debug.LogError("Can't find resource manager typetree.");
+                        zipFile.Close();
+                        return false;
+                        
                     }
                     break;
                 }
             }
             if (resourMgrObj == null) {
                 Debug.LogError("Can't find resource manager in mainData.");
+                zipFile.Close();
+                return false;
             }
-            zipFile.Close();          
+            zipFile.Close();
+            return true;    
         }
     }
 }

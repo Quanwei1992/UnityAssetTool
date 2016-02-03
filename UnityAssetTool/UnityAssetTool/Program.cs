@@ -13,13 +13,8 @@ namespace UnityAssetTool
 
         static void Main(string[] args)
         {
-            string path = "D:\\assettool\\全民无双.apk";
-
-            SerializeAPK apk = new SerializeAPK();
-            apk.DeSerialize(path);
-
-            //UnityAssetTools tools = new UnityAssetTools();
-            //tools.Run(args);
+            UnityAssetTools tools = new UnityAssetTools();
+            tools.Run(args);
             Console.Write("Please enter any key to contiue..");
             Console.Read();
         }

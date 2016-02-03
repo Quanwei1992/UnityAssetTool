@@ -22,7 +22,8 @@ namespace UnityAssetTool.Command
         [VerbOption("asset-sizeinfo", HelpText = "display assets size info.")]
         public AssetSizeInfoCommand asset_sizeinfo { get; set; }
 
-
+        [VerbOption("apk-unpack", HelpText = "extract asset objects form apk file")]
+        public APKUnpackCommand apk_unpack { get; set; }
         //
         // Marking a property of type IParserState with ParserStateAttribute allows you to
         // receive an instance of ParserState (that contains a IList<ParsingError>).

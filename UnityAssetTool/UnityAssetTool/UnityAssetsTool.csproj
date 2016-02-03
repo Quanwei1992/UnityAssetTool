@@ -82,6 +82,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command\APK\APKCommand.cs" />
+    <Compile Include="Command\APK\APKUnpackCommand.cs" />
     <Compile Include="Command\Asset\AssetCommand.cs" />
     <Compile Include="Command\Asset\AssetSizeInfoCommand.cs" />
     <Compile Include="Command\Asset\AssetUnpackCommand.cs" />
