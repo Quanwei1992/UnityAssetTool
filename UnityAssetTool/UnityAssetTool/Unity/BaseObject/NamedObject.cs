@@ -24,6 +24,7 @@ namespace UnityAssetTool.Unity
         public override void Deserialize(SerializeProperty rootProperty)
         {
             m_Name = (string)rootProperty.FindChild("m_Name").Value;
+           
         }
     }
 }

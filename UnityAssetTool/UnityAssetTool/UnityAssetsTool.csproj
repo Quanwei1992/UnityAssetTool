@@ -94,6 +94,7 @@
     <Compile Include="Command\TypeTreeDataBase\TypeTreeDataBaseShow.cs" />
     <Compile Include="Command\UnityAssetTools.cs" />
     <Compile Include="Extractor\AssetsExtractor\AssetExtrator.cs" />
+    <Compile Include="Extractor\AssetsExtractor\FontExtrator.cs" />
     <Compile Include="Extractor\AssetsExtractor\TextAssetExtrator.cs" />
     <Compile Include="Extractor\AssetsExtractor\Texture2DExtrator.cs" />
     <Compile Include="Extractor\ISerializeObjectExtrator.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="Unity\Asset.cs" />
     <Compile Include="Unity\BaseObject\BaseObject.cs" />
     <Compile Include="Unity\BaseObject\NamedObject.cs" />
+    <Compile Include="Unity\Font.cs" />
     <Compile Include="Unity\PPTR\PptrObject.cs" />
     <Compile Include="Unity\ResourceManager.cs" />
     <Compile Include="Unity\ISerialize.cs" />

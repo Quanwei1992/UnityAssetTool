@@ -240,7 +240,13 @@ namespace UnityAssetTool
                 ret = data.ReadInt16(arrayLength);
                 break;
                 case SerializePropertyType.String:
-                ret = data.ReadStringNullArray(arrayLength);
+                string[] stringArray = new string[arrayLength];
+                for (int i = 0; i < arrayLength; i++) {
+                    int strSize = data.ReadInt32();
+                    stringArray[i] = UnicodeEncoding.UTF8.GetString(data.ReadBytes(strSize));
+                    data.Align(4);
+                }
+                ret = stringArray;
                 break;
                 case SerializePropertyType.UInt:
                 ret = data.ReadUint32(arrayLength);

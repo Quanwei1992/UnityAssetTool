@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using UnityAssetTool.Unity;
 
 namespace UnityAssetTool.Extractor
 {
@@ -11,8 +12,10 @@ namespace UnityAssetTool.Extractor
     {
         public void Extract(SerializeObject obj, string outputPath)
         {
-            string name = obj.FindProperty("m_Name").Value as string;
-            string script = obj.FindProperty("m_Script").Value as string;
+            TextAsset textAsset = new TextAsset();
+            textAsset.Deserialize(obj.RootProperty);
+            string name = textAsset.name;
+            string script = "";
             outputPath = outputPath + "/" + name + ".txt";
             outputPath = AssetToolUtility.FixOuputPath(outputPath);
             if (!Directory.Exists(Path.GetDirectoryName(outputPath))) {

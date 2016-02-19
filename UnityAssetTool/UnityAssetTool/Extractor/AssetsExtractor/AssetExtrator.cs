@@ -23,6 +23,7 @@ namespace UnityAssetTool
         public AssetExtrator()
         {
             mObjectExtratorDic["TextAsset"] = new TextAssetExtrator();
+            mObjectExtratorDic["Font"] = new FontExtrator();
             //mObjectExtratorDic["Texture2D"] = new Texture2DExtrator();
         }
 
@@ -82,6 +83,7 @@ namespace UnityAssetTool
 
         public void ExtractObjct(Asset.AssetObjectInfo obj, TypeTree typeTree, string outputPath, ExtractMode mode = ExtractMode.Auto)
         {
+            outputPath = outputPath + "\\" + AssetToolUtility.ClassIDToClassName(obj.classID) + "\\";
             switch (mode) {
                 case ExtractMode.Auto:
                 ExtractAuto(obj, typeTree, outputPath);

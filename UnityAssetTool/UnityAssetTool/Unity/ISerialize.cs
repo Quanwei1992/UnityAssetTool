@@ -9,5 +9,7 @@ namespace UnityAssetTool.Unity
     public interface ISerialize
     {
         void Deserialize(SerializeProperty rootProperty);
+
+       
     }
 }
